@@ -1,13 +1,11 @@
 let canvas;
 let ctx; //abkürzung context
-let character = new Image();
+let world = new World();
 
 function init() {
-  canvas = document.getElementById("canvas");
-  ctx = canvas.getContext("2d"); //mit dieser variable kann man jetzt viele funktionen aufrufen
-  character.src = "../assets/img/2_character_pepe/2_walk/W-21.png";
+  canvas = document.getElementById('canvas');
+  ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
 
-  setTimeout(function () {
-    ctx.drawImage(character, 20, 20, 50, 150); // zahlen sind koordinaten (x,y, wie breit, wie hoch)
-  }, 2000);
+  console.log('My Character is', world.Character);
+  /*character.src = "../assets/img/2_character_pepe/2_walk/W-21.png";*/
 }
