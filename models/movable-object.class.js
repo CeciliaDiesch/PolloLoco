@@ -14,5 +14,6 @@ class MovableObject {
   }
 
   moveDown() {}
+  up() {}
   moveLeft() {}
 }
