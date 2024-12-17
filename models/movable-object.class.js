@@ -13,5 +13,6 @@ class MovableObject {
     console.log('Moving right');
   }
 
+  moveDown() {}
   moveLeft() {}
 }
