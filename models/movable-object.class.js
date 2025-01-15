@@ -7,6 +7,7 @@ class MovableObject {
   imageCache = {}; //ist ein json statt ein array, damit man bei loadImages den pfad als schlüssel nutzen kann
   currentImage = 0; // Variable um durch die Bilder durch zu iterieren
   speed = 0.1;
+  otherDirection = false;
 
   loadImage(path) {
     this.img = new Image(); // Image() ist bereits vorrogrammiert als (document.getElementById('image') <img id="image">), braucht man nicht extra definieren

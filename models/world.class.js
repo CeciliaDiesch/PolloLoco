@@ -1,16 +1,13 @@
 class World {
   character = new Character();
-  enemies = [new Chicken(), new Chicken(), new Chicken()];
-  clouds = [new Clouds(), new Clouds(), new Clouds()];
-  background = [
-    new Background1('../assets/img/5_background/layers/air.png', 0),
-    new Background1('../assets/img/5_background/layers/3_third_layer/1.png', 0),
-    new Background1('../assets/img/5_background/layers/2_second_layer/1.png', 0),
-    new Background1('../assets/img/5_background/layers/1_first_layer/1.png', 0),
-  ];
+  level = level1; // enemies, clouds, background wird jetzt definiert in level1.js und level.class.js über das level1.
+  enemies = level1.enemies;
+  clouds = level1.clouds;
+  background = level1.background;
   canvas;
   ctx;
   keyboard;
+  camera_x = 0;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
@@ -31,10 +28,14 @@ class World {
   draw() {
     this.ctx.clearRect(0, 0, canvas.width, canvas.height); //cleared das ganze canvas um nur neue position von inhalten anzuzeigen
 
-    this.addObjectToMap(this.background);
+    this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
+
+    this.addObjectToMap(this.level.background);
     this.addToMap(this.character);
-    this.addObjectToMap(this.enemies);
-    this.addObjectToMap(this.clouds);
+    this.addObjectToMap(this.level.enemies);
+    this.addObjectToMap(this.level.clouds);
+
+    this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
     //hiermit wird die funktion so oft aufgerufen in der sekunde, wie die grafikkarte es zulässt
     let self = this; //das ist ein vorgehen in der objektorientierung, weil er this in der klammer nicht mehr kennt
@@ -50,6 +51,15 @@ class World {
   }
 
   addToMap(mo) {
-    this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+    //dies ist unsere draw methode
+    if (mo.otherDirection) {
+      this.ctx.save();
+      this.ctx.translate(mo.x + mo.width, 0); //dies verändert die transformationsmatrix, wie alle folgenden zeichnungen auf dem canvas dargestellt werden, bis die Transformationen rückgängig gemacht werden mit vorher ctx.save und hinterher ctx.restore
+      this.ctx.scale(-1, 1);
+      this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+      this.ctx.restore(); // hier wird die trafo matrix wieder zurückgesetzt, nachdem das eine gespiegelte character bild eingefügt wurde
+    } else {
+      this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+    }
   }
 }
