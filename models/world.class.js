@@ -4,6 +4,8 @@ class World {
   enemies = level1.enemies;
   clouds = level1.clouds;
   background = level1.background;
+  bottle = level1.bottle;
+  coins = level1.coins;
   canvas;
   ctx;
   keyboard;
@@ -26,6 +28,9 @@ class World {
     this.enemies.forEach((enemy) => {
       enemy.world = this; // Welt-Referenz an alle Feinde übergeben, einschließlich Endboss
     });
+    this.clouds.forEach((cloud) => {
+      cloud.world = this; // Welt-Referenz an alle Clouds übergeben
+    });
   }
 
   draw() {
@@ -37,6 +42,8 @@ class World {
     this.addToMap(this.character);
     this.addObjectToMap(this.level.enemies);
     this.addObjectToMap(this.level.clouds);
+    this.addObjectToMap(this.level.bottle);
+    this.addObjectToMap(this.level.coins);
 
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 

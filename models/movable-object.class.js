@@ -38,6 +38,28 @@ class MovableObject {
   moveLeft() {
     setInterval(() => {
       this.x -= this.speed;
+      if (this.x + this.width < 0) {
+        // Setze die x-Position auf level_end_x
+        this.x = this.world.level.level_end_x;
+      }
     }, 1000 / 60); //60 mal pro sekunde wird 0.1px von der x koordinate abgezogen
+  }
+
+  moveUpAndDown() {
+    let direction = 1; // 1 = nach unten, -1 = nach oben
+    let step = 1; // Schrittgröße
+    let minY = 30; // Minimaler y-Wert
+    let maxY = 50; // Maximaler y-Wert
+
+    setInterval(() => {
+      this.y += direction * step;
+      if (this.y <= minY) {
+        this.y = minY;
+        direction = 1; // Richtung ändern zu nach unten
+      } else if (this.y >= maxY) {
+        this.y = maxY;
+        direction = -1; // Richtung ändern zu nach oben
+      }
+    }, 1000 / 60); // 60 Mal pro Sekunde für flüssige Bewegung
   }
 }
