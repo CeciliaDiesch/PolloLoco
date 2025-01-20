@@ -23,6 +23,9 @@ class World {
 
   setWorld() {
     this.character.world = this; //eine instanz auf alle movable objects übergeben, haupstsächlich erstmal auf den character
+    this.enemies.forEach((enemy) => {
+      enemy.world = this; // Welt-Referenz an alle Feinde übergeben, einschließlich Endboss
+    });
   }
 
   draw() {

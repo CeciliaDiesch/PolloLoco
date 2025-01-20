@@ -8,6 +8,7 @@ class MovableObject {
   currentImage = 0; // Variable um durch die Bilder durch zu iterieren
   speed = 0.1;
   otherDirection = false;
+  world;
 
   loadImage(path) {
     this.img = new Image(); // Image() ist bereits vorrogrammiert als (document.getElementById('image') <img id="image">), braucht man nicht extra definieren
@@ -27,10 +28,11 @@ class MovableObject {
     });
   }
 
-  moveRight() {
-    //in modernen Paradigmen braucht man function nicht mehr, Objektorientierung ist modern
-
-    console.log('Moving right');
+  playAnimation(images) {
+    let i = this.currentImage % images.length; //% steht für Modulu, ist also der Restvom Images_walking Array, also 6, also let i=0 % 6 (zb i=5%6 ist 0 Rest 5, i=6%6 ist 1 Rest 0, i=7%6 ist 1 Rest 1) also ist i = 0,1,2,3,4,5,0,1,2,3,4,5,0,1,2...
+    let path = images[i];
+    this.img = this.imageCache[path]; //Wir greifen auf einen Eintrag von unserem Array zu
+    this.currentImage++;
   }
 
   moveLeft() {
