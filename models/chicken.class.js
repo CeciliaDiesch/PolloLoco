@@ -20,7 +20,10 @@ class Chicken extends MovableObject {
   }
 
   animate() {
-    this.moveLeft();
+    setInterval(() => {
+      this.moveLeft();
+    }, 1000 / 60); //60 mal pro sekunde wird 0.1px von der x koordinate abgezogen
+
     setInterval(() => {
       this.playAnimation(this.Images_Walking);
     }, 300);

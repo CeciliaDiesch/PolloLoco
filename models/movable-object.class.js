@@ -9,6 +9,22 @@ class MovableObject {
   speed = 0.1;
   otherDirection = false;
   world;
+  speedY = 0;
+  accelartion = 2.5;
+
+  applyGravity() {
+    setInterval(() => {
+      if (this.isAboveGround() || this.speedY > 0) {
+        //speed Y wird ja positiv wenn man hoch springen will, was ja passiert, wenn man UP drückt
+        this.y -= this.speedY;
+        this.speedY -= this.accelartion;
+      }
+    }, 1000 / 25);
+  }
+
+  isAboveGround() {
+    return this.y < 180; //gibt an, sobald pepe wieder bis auf ground level runtergefallen ist
+  }
 
   loadImage(path) {
     this.img = new Image(); // Image() ist bereits vorrogrammiert als (document.getElementById('image') <img id="image">), braucht man nicht extra definieren
@@ -36,13 +52,15 @@ class MovableObject {
   }
 
   moveLeft() {
-    setInterval(() => {
-      this.x -= this.speed;
-      if (this.x + this.width < 0) {
-        // Setze die x-Position auf level_end_x
-        this.x = this.world.level.level_end_x;
-      }
-    }, 1000 / 60); //60 mal pro sekunde wird 0.1px von der x koordinate abgezogen
+    this.x -= this.speed;
+    if (this.x + this.width < 0) {
+      // Setze die x-Position auf level_end_x
+      this.x = this.world.level.level_end_x;
+    }
+  }
+
+  moveRight() {
+    this.x += this.speed;
   }
 
   moveUpAndDown() {
