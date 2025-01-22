@@ -10,7 +10,8 @@ class Chicken extends MovableObject {
   ];
 
   constructor() {
-    super().loadImage('../assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
+    super();
+    this.loadImage('../assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
     this.loadImages(this.Images_Walking);
 
     this.x = 200 + Math.random() * 500; //math.random() berechnet irgendeine random zahl zw 0 und 1 (* 500 damit zw 0 und 500)

@@ -10,6 +10,8 @@ class World {
   ctx;
   keyboard;
   camera_x = 0;
+  intervalIds = [];
+  i = 1;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
@@ -21,6 +23,7 @@ class World {
 
     this.draw();
     this.setWorld();
+    this.checkCollisions();
   }
 
   setWorld() {
@@ -31,6 +34,17 @@ class World {
     this.clouds.forEach((cloud) => {
       cloud.world = this; // Welt-Referenz an alle Clouds übergeben
     });
+  }
+
+  checkCollisions() {
+    setInterval(() => {
+      this.level.enemies.forEach((enemy) => {
+        if (this.character.isColliding(enemy)) {
+          this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit()steht ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird
+          console.log('collision with Character', this.character.energy);
+        }
+      });
+    }, 1000);
   }
 
   draw() {
@@ -63,13 +77,18 @@ class World {
   addToMap(mo) {
     //dies ist unsere draw methode
     if (mo.otherDirection) {
-      this.ctx.save();
-      this.ctx.translate(mo.x + mo.width, 0); //dies verändert die transformationsmatrix, wie alle folgenden zeichnungen auf dem canvas dargestellt werden, bis die Transformationen rückgängig gemacht werden mit vorher ctx.save und hinterher ctx.restore
-      this.ctx.scale(-1, 1);
-      this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
-      this.ctx.restore(); // hier wird die trafo matrix wieder zurückgesetzt, nachdem das eine gespiegelte character bild eingefügt wurde
+      this.flipImage(mo);
     } else {
-      this.ctx.drawImage(mo.img, mo.x, mo.y, mo.width, mo.height);
+      mo.draw(this.ctx); //ist in movable-object.class gespeichert
     }
+    mo.drawFrame(this.ctx); //ist in movable-object.class gespeichert
+  }
+
+  flipImage(mo) {
+    this.ctx.save();
+    this.ctx.translate(mo.x + mo.width, 0); //dies verändert die transformationsmatrix, wie alle folgenden zeichnungen auf dem canvas dargestellt werden, bis die Transformationen rückgängig gemacht werden mit vorher ctx.save und hinterher ctx.restore
+    this.ctx.scale(-1, 1);
+    this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
+    this.ctx.restore(); // hier wird die trafo matrix wieder zurückgesetzt, nachdem das eine gespiegelte character bild eingefügt wurde
   }
 }

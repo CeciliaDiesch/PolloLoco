@@ -2,6 +2,20 @@ class Character extends MovableObject {
   height = 240;
   y = 80;
   speed = 10;
+  offset = {
+    top: 20,
+    bottom: 20,
+    left: 20,
+    right: 40,
+  };
+  /* für ein korrigierten character drawFrame () { ctx.rect(this.x + this.offset.left, this.y + this.offset.bottom, this.width - this.offset.right,...)}  in movable-object
+   offset = {
+    top: 110,
+    bottom: 100,
+    left: 20,
+    right: 40,
+  };*/
+
   Images_Walking = [
     '../assets/img/2_character_pepe/2_walk/W-21.png',
     '../assets/img/2_character_pepe/2_walk/W-22.png',
@@ -23,6 +37,22 @@ class Character extends MovableObject {
     '../assets/img/2_character_pepe/3_jump/J-39.png',
   ];
 
+  Images_Hurt = [
+    '../assets/img/2_character_pepe/4_hurt/H-41.png',
+    '../assets/img/2_character_pepe/4_hurt/H-42.png',
+    '../assets/img/2_character_pepe/4_hurt/H-43.png',
+  ];
+
+  Images_Dead = [
+    '../assets/img/2_character_pepe/5_dead/D-51.png',
+    '../assets/img/2_character_pepe/5_dead/D-52.png',
+    '../assets/img/2_character_pepe/5_dead/D-53.png',
+    '../assets/img/2_character_pepe/5_dead/D-54.png',
+    '../assets/img/2_character_pepe/5_dead/D-55.png',
+    '../assets/img/2_character_pepe/5_dead/D-56.png',
+    '../assets/img/2_character_pepe/5_dead/D-57.png',
+  ];
+
   world;
   walking_sound = new Audio('audio/walking4.mp3');
 
@@ -30,6 +60,8 @@ class Character extends MovableObject {
     super().loadImage('../assets/img/2_character_pepe/2_walk/W-22.png');
     this.loadImages(this.Images_Walking);
     this.loadImages(this.Images_Jumping);
+    this.loadImages(this.Images_Hurt);
+    this.loadImages(this.Images_Dead);
     /*this.walking_sound.playbackRate = 4;*/
 
     this.animate();
@@ -37,7 +69,7 @@ class Character extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
+    let moving = setInterval(() => {
       //Bewegung nach rechts in einem extra INtervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
       this.walking_sound.pause();
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
@@ -59,9 +91,15 @@ class Character extends MovableObject {
 
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
+    intervalIds.push(moving);
 
-    setInterval(() => {
-      if (this.isAboveGround()) {
+    let animation = setInterval(() => {
+      if (this.isDead()) {
+        this.playAnimation(this.Images_Dead);
+        this.stopGame();
+      } else if (this.isHurt()) {
+        this.playAnimation(this.Images_Hurt);
+      } else if (this.isAboveGround()) {
         this.playAnimation(this.Images_Jumping);
       } else {
         if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
@@ -71,6 +109,11 @@ class Character extends MovableObject {
         }
       }
     }, 50);
+    intervalIds.push(animation);
+  }
+
+  stopGame() {
+    intervalIds.forEach(clearInterval);
   }
 
   jump() {

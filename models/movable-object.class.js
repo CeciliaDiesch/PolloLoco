@@ -11,6 +11,15 @@ class MovableObject {
   world;
   speedY = 0;
   accelartion = 2.5;
+  energy = 100;
+  lastHit = 0;
+
+  offset = {
+    top: 0,
+    bottom: 0,
+    left: 0,
+    right: 0,
+  };
 
   applyGravity() {
     setInterval(() => {
@@ -29,6 +38,54 @@ class MovableObject {
   loadImage(path) {
     this.img = new Image(); // Image() ist bereits vorrogrammiert als (document.getElementById('image') <img id="image">), braucht man nicht extra definieren
     this.img.src = path;
+  }
+
+  draw(ctx) {
+    ctx.drawImage(this.img, this.x, this.y, this.width, this.height);
+  }
+
+  drawFrame(ctx) {
+    if (this instanceof Character || this instanceof Chicken) {
+      //bezieht sich nur noch auf die classes character und chicken, obwohl noch mehr classes die class movable-object erben, die anderen sind dann hier ausgenommen
+      ctx.beginPath();
+      ctx.lineWidth = '5';
+      ctx.strokeStyle = 'blue';
+      ctx.rect(
+        this.x, // + this.offset.left,
+        this.y, //+ this.offset.bottom
+        this.width, // - this.offset.right,
+        this.height //- this.offset.top
+      );
+      ctx.stroke();
+    }
+  }
+
+  isColliding(obj) {
+    return (
+      this.x + this.width - this.offset.right >= obj.x + obj.offset.left &&
+      this.x + this.offset.left <= obj.x + obj.width - obj.offset.right &&
+      this.y + this.height - this.offset.top >= obj.y + obj.offset.bottom && //irgendwie noch + this.offsetY mit in this.y + this.offsetY + this.height reinbringen für besserer genauigkeit?!
+      this.y + this.offset.bottom <= obj.y + obj.height - obj.offset.top // irgendwie noch this.y + this.offsetY mit reinbringen für besserer genauigkeit ?!
+    );
+  }
+
+  hit() {
+    this.energy -= 5;
+    if (this.energy < 0) {
+      this.energy = 0;
+    } else {
+      this.lastHit = new Date().getTime();
+    }
+  }
+
+  isHurt() {
+    let timepassed = new Date().getTime() - this.lastHit; // Difference in ms
+    timepassed = timepassed / 1000; // Difference in s
+    return timepassed < 1; // wird als true zurück gegeben wenn differenz kleiner als 5 sekunden
+  }
+
+  isDead() {
+    return this.energy == 0;
   }
 
   /**
