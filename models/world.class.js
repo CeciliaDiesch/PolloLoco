@@ -6,12 +6,11 @@ class World {
   background = level1.background;
   bottle = level1.bottle;
   coins = level1.coins;
+  statusbar = new Statusbar();
   canvas;
   ctx;
   keyboard;
   camera_x = 0;
-  intervalIds = [];
-  i = 1;
 
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
@@ -28,31 +27,41 @@ class World {
 
   setWorld() {
     this.character.world = this; //eine instanz auf alle movable objects übergeben, haupstsächlich erstmal auf den character
+
     this.enemies.forEach((enemy) => {
       enemy.world = this; // Welt-Referenz an alle Feinde übergeben, einschließlich Endboss
     });
     this.clouds.forEach((cloud) => {
       cloud.world = this; // Welt-Referenz an alle Clouds übergeben
     });
+    this.statusbar.world = this;
   }
 
   checkCollisions() {
-    setInterval(() => {
+    let CollisionCheck = setInterval(() => {
       this.level.enemies.forEach((enemy) => {
         if (this.character.isColliding(enemy)) {
           this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit()steht ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird
+          this.statusbar.setPercentage(this.character.energy);
           console.log('collision with Character', this.character.energy);
         }
       });
-    }, 1000);
+    }, 1000 / 5);
+    intervalIds.push(CollisionCheck);
+    console.log('InetervalArray is', intervalIds);
   }
 
   draw() {
-    this.ctx.clearRect(0, 0, canvas.width, canvas.height); //cleared das ganze canvas um nur neue position von inhalten anzuzeigen
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //cleared das ganze canvas um nur neue position von inhalten anzuzeigen
 
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
 
     this.addObjectToMap(this.level.background);
+
+    this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
+    this.addToMap(this.statusbar);
+    this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
+
     this.addToMap(this.character);
     this.addObjectToMap(this.level.enemies);
     this.addObjectToMap(this.level.clouds);

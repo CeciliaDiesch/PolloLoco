@@ -2,8 +2,8 @@ let canvas;
 let ctx; //abkürzung context
 let world;
 let keyboard = new Keyboard(); //hiermit erstellen wir eine Instanz von der class
-window.intervalIds = [];
-var i = 1;
+let intervalIds = [];
+i = 1;
 
 /*function setStoppableInterval(fn, time) {
   let id = setInterval(fn, time);

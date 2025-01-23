@@ -6,7 +6,7 @@ class Character extends MovableObject {
     top: 20,
     bottom: 20,
     left: 20,
-    right: 40,
+    right: 10,
   };
   /* für ein korrigierten character drawFrame () { ctx.rect(this.x + this.offset.left, this.y + this.offset.bottom, this.width - this.offset.right,...)}  in movable-object
    offset = {
@@ -38,9 +38,9 @@ class Character extends MovableObject {
   ];
 
   Images_Hurt = [
+    '../assets/img/2_character_pepe/4_hurt/H-43.png',
     '../assets/img/2_character_pepe/4_hurt/H-41.png',
     '../assets/img/2_character_pepe/4_hurt/H-42.png',
-    '../assets/img/2_character_pepe/4_hurt/H-43.png',
   ];
 
   Images_Dead = [
@@ -57,7 +57,8 @@ class Character extends MovableObject {
   walking_sound = new Audio('audio/walking4.mp3');
 
   constructor() {
-    super().loadImage('../assets/img/2_character_pepe/2_walk/W-22.png');
+    super();
+    this.loadImage('../assets/img/2_character_pepe/2_walk/W-22.png');
     this.loadImages(this.Images_Walking);
     this.loadImages(this.Images_Jumping);
     this.loadImages(this.Images_Hurt);
