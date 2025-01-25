@@ -41,9 +41,23 @@ class World {
     let CollisionCheck = setInterval(() => {
       this.level.enemies.forEach((enemy) => {
         if (this.character.isColliding(enemy)) {
-          this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit()steht ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird
+          this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
           this.statusbar.setPercentage(this.character.energy);
           console.log('collision with Character', this.character.energy);
+        }
+      });
+      this.level.coins.forEach((coin) => {
+        if (this.character.isColliding(coin)) {
+          this.character.hitCoin(coin);
+          this.statusbar.setPercentageCoins(this.character.coins);
+          console.log('collision with Coins', this.character.coins);
+        }
+      });
+      this.level.bottle.forEach((bottle) => {
+        if (this.character.isColliding(bottle)) {
+          this.character.hitBottle(bottle);
+          this.statusbar.setPercentageBottles(this.character.bottle);
+          console.log('collision with Bottle', this.character.bottle);
         }
       });
     }, 1000 / 5);
@@ -99,5 +113,20 @@ class World {
     this.ctx.scale(-1, 1);
     this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
     this.ctx.restore(); // hier wird die trafo matrix wieder zurückgesetzt, nachdem das eine gespiegelte character bild eingefügt wurde
+  }
+
+  removeObject(obj) {
+    const arrays = ['bottle', 'coins'];
+
+    for (let arrayName of arrays) {
+      const index = this.level[arrayName].indexOf(obj);
+      if (index > -1) {
+        this.level[arrayName].splice(index, 1);
+        console.log(`${arrayName} entfernt:`, obj);
+        return;
+      } else {
+        console.log(`${arrayName} nicht gefunden:`, obj);
+      }
+    }
   }
 }

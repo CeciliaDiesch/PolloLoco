@@ -1,13 +1,15 @@
 class MovableObject extends DrawableObject {
   speed = 0.1;
   otherDirection = false;
-  world;
   speedY = 0;
   accelartion = 2.5;
   energy = 100;
-  coins = 100;
+  coins = 0;
+  bottle = 0;
   lastHit = 0;
   world;
+  coin_sound = new Audio('audio/coin.mp3');
+  bottle_sound = new Audio('audio/collect.mp3');
 
   constructor() {
     super();
@@ -31,16 +33,10 @@ class MovableObject extends DrawableObject {
     return (
       this.x + this.width - this.offset.right >= obj.x + obj.offset.left &&
       this.x + this.offset.left <= obj.x + obj.width - obj.offset.right &&
-      this.y + this.height - this.offset.top >= obj.y + obj.offset.bottom && //irgendwie noch + this.offsetY mit in this.y + this.offsetY + this.height reinbringen für besserer genauigkeit?!
-      this.y + this.offset.bottom <= obj.y + obj.height - obj.offset.top // irgendwie noch this.y + this.offsetY mit reinbringen für besserer genauigkeit ?!
+      this.y + this.height - this.offset.bottom >= obj.y + obj.offset.top && // Die untere Seite des ersten Objekts (Character) ist unterhalb der oberen Seite des zweiten Objekts (obj)
+      // unter Berücksichtigung der Offsets. Unterhalb weil kleinere y werte oben sind und nach unten größer werden.
+      this.y + this.offset.top <= obj.y + obj.height - obj.offset.bottom
     );
-  }
-
-  hitCoin() {
-    this.coin += 20;
-    if (this.coin > 100) {
-      this.coin = 100;
-    }
   }
 
   hit() {
@@ -50,6 +46,35 @@ class MovableObject extends DrawableObject {
     } else {
       this.lastHit = new Date().getTime(); //ms die seit dem 1.1.1970 vergangen sind
     }
+  }
+
+  hitCoin(coin) {
+    this.coins += 20;
+    if (this.coins > 100) {
+      this.coins = 100;
+    }
+    this.world.removeObject(coin); //rufen eine Methode removeCoin() auf der World-Instanz auf, um die Münze zu entfernen.
+    this.coin_sound.volume = 0.3;
+    this.coin_sound.play();
+  }
+
+  hitBottle(bottle) {
+    this.bottle += 20;
+    if (this.bottle > 100) {
+      this.bottle = 100;
+    }
+    this.world.removeObject(bottle); //rufen eine Methode removeCoin() auf der World-Instanz auf, um die Münze zu entfernen.
+    this.playAudioSegment(this.bottle_sound, 0, 1);
+  }
+
+  playAudioSegment(audio, start, duration) {
+    audio.currentTime = start;
+    audio.play();
+
+    setTimeout(() => {
+      audio.pause();
+      audio.currentTime = start; // Optional: Setze den Startpunkt zurück
+    }, duration * 1000); // Dauer in Sekunden
   }
 
   isHurt() {

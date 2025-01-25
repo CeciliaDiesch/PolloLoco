@@ -25,7 +25,8 @@ class Endboss extends MovableObject {
   constructor() {
     /*super().loadImage(this.Images_Walking[0]);*/
     /*this.loadImages(this.Images_Walking);*/
-    super().loadImage(this.Images_Angry[0]);
+    super();
+    this.loadImage(this.Images_Angry[0]);
     this.x = 2500;
 
     this.loadImages(this.Images_Angry);
@@ -35,7 +36,7 @@ class Endboss extends MovableObject {
 
   animate() {
     setInterval(() => {
-      if (this.world.camera_x <= -2150) {
+      if (this.world && this.world.camera_x <= -2150) {
         this.playAnimation(this.Images_Angry);
       }
     }, 300);

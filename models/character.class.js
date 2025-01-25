@@ -3,10 +3,10 @@ class Character extends MovableObject {
   y = 80;
   speed = 10;
   offset = {
-    top: 20,
-    bottom: 20,
-    left: 20,
-    right: 10,
+    top: 100,
+    bottom: 0,
+    left: 40,
+    right: 35,
   };
   /* für ein korrigierten character drawFrame () { ctx.rect(this.x + this.offset.left, this.y + this.offset.bottom, this.width - this.offset.right,...)}  in movable-object
    offset = {
