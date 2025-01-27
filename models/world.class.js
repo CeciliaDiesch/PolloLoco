@@ -7,6 +7,7 @@ class World {
   bottle = level1.bottle;
   coins = level1.coins;
   statusbar = new Statusbar();
+  throwableObjects = [];
   canvas;
   ctx;
   keyboard;
@@ -22,7 +23,7 @@ class World {
 
     this.draw();
     this.setWorld();
-    this.checkCollisions();
+    this.run();
   }
 
   setWorld() {
@@ -36,38 +37,56 @@ class World {
     });
     this.bottle.forEach((bottle) => {
       bottle.world = this; // Welt-Referenz an alle Bottles übergeben
-      bottle.animate();
-      bottle.applyGravityThrow();
     });
+
     this.statusbar.world = this;
   }
 
-  checkCollisions() {
-    let CollisionCheck = setInterval(() => {
-      this.level.enemies.forEach((enemy) => {
-        if (this.character.isColliding(enemy)) {
-          this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
-          this.statusbar.setPercentage(this.character.energy);
-          console.log('collision with Character', this.character.energy);
-        }
-      });
-      this.level.coins.forEach((coin) => {
-        if (this.character.isColliding(coin)) {
-          this.character.hitCoin(coin);
-          this.statusbar.setPercentageCoins(this.character.coins);
-          console.log('collision with Coins', this.character.coins);
-        }
-      });
-      this.level.bottle.forEach((bottle) => {
-        if (this.character.isColliding(bottle)) {
-          this.character.hitBottle(bottle);
-          this.statusbar.setPercentageBottles(this.character.bottle);
-          console.log('collision with Bottle', this.character.bottle);
-        }
-      });
+  run() {
+    let run = setInterval(() => {
+      //check collisions
+      this.checkCollisions();
+      this.checkThrowObjects();
     }, 1000 / 5);
-    intervalIds.push(CollisionCheck);
+    intervalIds.push(run);
     console.log('InetervalArray is', intervalIds);
+  }
+
+  checkThrowObjects() {
+    if (this.keyboard.X) {
+      let bottlesFly = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+      this.throwableObjects.push(bottlesFly);
+      this.throwableObjects.forEach((throwableObject) => {
+        throwableObject.world = this; // Welt-Referenz an alle throwableObjects übergeben
+        throwableObject.throw(); // Starte den Wurf
+        this.statusbar.setPercentageBottles(this.character.bottle);
+        console.log('Bottle thrown', this.character.bottle);
+      });
+    }
+  }
+
+  checkCollisions() {
+    this.level.enemies.forEach((enemy) => {
+      if (this.character.isColliding(enemy)) {
+        this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
+        this.statusbar.setPercentage(this.character.energy);
+        console.log('collision with Character', this.character.energy);
+      }
+    });
+    this.level.coins.forEach((coin) => {
+      if (this.character.isColliding(coin)) {
+        this.character.hitCoin(coin);
+        this.statusbar.setPercentageCoins(this.character.coins);
+        console.log('collision with Coins', this.character.coins);
+      }
+    });
+    this.level.bottle.forEach((bottle) => {
+      if (this.character.isColliding(bottle)) {
+        this.character.hitBottle(bottle);
+        this.statusbar.setPercentageBottles(this.character.bottle);
+        console.log('collision with Bottle', this.character.bottle);
+      }
+    });
   }
 
   draw() {
@@ -86,6 +105,7 @@ class World {
     this.addObjectToMap(this.level.clouds);
     this.addObjectToMap(this.level.bottle);
     this.addObjectToMap(this.level.coins);
+    this.addObjectToMap(this.throwableObjects);
 
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
@@ -121,9 +141,9 @@ class World {
   }
 
   removeObject(obj) {
-    const arrays = ['bottle', 'coins'];
+    const levelArrays = ['bottle', 'coins'];
 
-    for (let arrayName of arrays) {
+    for (let arrayName of levelArrays) {
       const index = this.level[arrayName].indexOf(obj);
       if (index > -1) {
         this.level[arrayName].splice(index, 1);
@@ -132,6 +152,15 @@ class World {
       } else {
         console.log(`${arrayName} nicht gefunden:`, obj);
       }
+    }
+
+    const throwableIndex = this.throwableObjects.indexOf(obj);
+    if (throwableIndex > -1) {
+      this.throwableObjects.splice(throwableIndex, 1);
+      console.log(`throwableObjects entfernt:`, obj);
+      return;
+    } else {
+      console.log(`throwableObjects nicht gefunden:`, obj);
     }
   }
 }

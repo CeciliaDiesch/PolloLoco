@@ -1,41 +1,28 @@
 class ThrowableObject extends MovableObject {
-  speed = 0.1;
-  speedY = 0;
-  speedX = 0;
-  accelartion = 2.5;
+  height = 70;
+  width = 50;
   world;
-  bottle_sound_flying = new Audio('audio/collect.mp3');
-  walking_sound = new Audio('audio/walking4.mp3');
+  bottle_sound_flying = new Audio('audio/bottleFly.mp3');
+  moveXInterval;
+  checkGroundInterval;
 
-  constructor() {
+  constructor(x, y, world, bottle) {
     super();
-    /*this.x=0;
-    this.y=0;
-    this.loadImage('../assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');*/
-  }
-
-  applyGravityThrow() {
-    setInterval(() => {
-      if (this.isAboveGround() || this.speedY > 0) {
-        //speed Y wird ja positiv wenn man hoch springen will, was ja passiert, wenn man UP drückt
-        this.y -= this.speedY;
-        this.speedY -= this.accelartion;
-        this.x += this.speedX;
-      }
-    }, 1000 / 25);
-  }
-
-  isAboveGround() {
-    return this.y < 360; //gibt an, sobald die flasche wieder bis auf ground level runtergefallen ist
+    this.x = x;
+    this.y = y;
+    this.world = world;
+    this.bottle = bottle;
+    this.loadImage('../assets/img/6_salsa_bottle/salsa_bottle.png');
+    this.bottle_sound_flying.loop = true; //Loope den Sound
   }
 
   animate() {
     let throwing = setInterval(() => {
       this.walking_sound.pause();
 
-      if (this.world.keyboard && this.world.keyboard.X && !this.isAboveGround()) {
+      if (this.world.keyboard && this.world.keyboard.X) {
         //wenn pepe wieder am ground ist, hat er ein speedY von -22.5, also ab da, kann er wieder springen
-        this.throw();
+        this.throw(100, 150);
         this.walking_sound.play();
       }
 
@@ -45,7 +32,48 @@ class ThrowableObject extends MovableObject {
   }
 
   throw() {
-    this.speedY = 30;
-    this.speedX = 20;
+    if (this.y < 360) {
+      /*this.bottle -= 20;
+        if (this.bottle < 100) {
+          this.bottle = 0;
+        }*/
+      this.bottle_sound_flying.currentTime = 0;
+      this.bottle_sound_flying.play();
+      this.speedY = 30;
+      this.gravityInterval = this.applyGravity(); //Starte die Gravitation und speichere die Interval-ID
+      this.moveXInterval = setInterval(() => {
+        this.x += 10;
+      }, 25);
+      this.checkGroundInterval = setInterval(() => {
+        if (this.y >= 360) {
+          this.stopFlying();
+        }
+      }, 100);
+    }
+  }
+
+  stopFlying() {
+    // Pausiere den Flug-Sound
+    this.bottle_sound_flying.pause();
+    this.bottle_sound_flying.currentTime = 0; // Setze den Startpunkt zurück
+
+    // Stoppe die horizontale Bewegung
+    clearInterval(this.moveXInterval);
+
+    // Stoppe die Gravitation
+    clearInterval(this.gravityInterval);
+
+    // Stoppe die Bodenkollisionsüberwachung
+    clearInterval(this.checkGroundInterval);
+
+    this.loadImage(
+      '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png'
+    );
+
+    // Optional: Setze eine kurze Verzögerung, bevor die Splash-Flasche entfernt wird
+    setTimeout(() => {
+      this.world.removeObject(this); // Verwende direkt 'world.removeObject(this)'
+      console.log('Splash-Flasche wurde aus der Welt entfernt.');
+    }, 3000); // Entfernt die Splash-Flasche nach 1 Sekunde
   }
 }

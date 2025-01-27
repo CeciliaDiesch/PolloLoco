@@ -1,4 +1,4 @@
-class Bottle extends ThrowableObject {
+class Bottle extends MovableObject {
   x;
   y = 360;
   img;

@@ -16,7 +16,7 @@ class MovableObject extends DrawableObject {
   }
 
   applyGravity() {
-    setInterval(() => {
+    return setInterval(() => {
       if (this.isAboveGround() || this.speedY > 0) {
         //speed Y wird ja positiv wenn man hoch springen will, was ja passiert, wenn man UP drückt
         this.y -= this.speedY;
@@ -26,7 +26,11 @@ class MovableObject extends DrawableObject {
   }
 
   isAboveGround() {
-    return this.y < 180; //gibt an, sobald pepe wieder bis auf ground level runtergefallen ist
+    if (this instanceof ThrowableObject) {
+      return this.y < 360;
+    } else {
+      return this.y < 180; //gibt an, sobald pepe wieder bis auf ground level runtergefallen ist
+    }
   }
 
   isColliding(obj) {
