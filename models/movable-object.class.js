@@ -127,4 +127,34 @@ class MovableObject extends DrawableObject {
       }
     }, 1000 / 60); // 60 Mal pro Sekunde für flüssige Bewegung
   }
+  throw() {
+    this.bottle -= 20;
+    if (this.bottle < 100) {
+      this.bottle = 0;
+    }
+    this.speedY = 30;
+    this.gravityInterval = this.applyGravity(); //Starte die Gravitation und speichere die Interval-ID
+    this.moveXInterval = setInterval(() => {
+      this.x += 10;
+    }, 25);
+    this.checkGroundInterval = setInterval(() => {
+      if (this.y >= 360) {
+        this.stopFlying();
+      }
+    }, 100);
+  }
+
+  stopFlying() {
+    // Stoppe die horizontale Bewegung
+    clearInterval(this.moveXInterval);
+
+    // Stoppe die Gravitation
+    clearInterval(this.gravityInterval);
+
+    // Stoppe die Bodenkollisionsüberwachung
+    clearInterval(this.checkGroundInterval);
+
+    /*this.world.removeObject(this);*/ // Verwende direkt 'world.removeObject(this)'
+    console.log('Flasche wurde aus der Welt entfernt.');
+  }
 }

@@ -53,15 +53,15 @@ class World {
   }
 
   checkThrowObjects() {
-    if (this.keyboard.X) {
-      let bottlesFly = new ThrowableObject(this.character.x + 100, this.character.y + 100);
+    if (this.keyboard.X && this.character.bottle >= 20) {
+      this.character.bottle -= 20;
+      let bottlesFly = new ThrowableObject(this.character.x + 100, this.character.y + 100, this);
       this.throwableObjects.push(bottlesFly);
-      this.throwableObjects.forEach((throwableObject) => {
-        throwableObject.world = this; // Welt-Referenz an alle throwableObjects übergeben
-        throwableObject.throw(); // Starte den Wurf
-        this.statusbar.setPercentageBottles(this.character.bottle);
-        console.log('Bottle thrown', this.character.bottle);
-      });
+
+      this.throwableObjects.world = this; // Welt-Referenz an alle throwableObjects übergeben
+      bottlesFly.throw(); // Nur das neue Objekt werfen
+      this.statusbar.setPercentageBottles(this.character.bottle);
+      console.log('Bottle thrown', this.character.bottle);
     }
   }
 
