@@ -34,6 +34,11 @@ class World {
     this.clouds.forEach((cloud) => {
       cloud.world = this; // Welt-Referenz an alle Clouds übergeben
     });
+    this.bottle.forEach((bottle) => {
+      bottle.world = this; // Welt-Referenz an alle Bottles übergeben
+      bottle.animate();
+      bottle.applyGravityThrow();
+    });
     this.statusbar.world = this;
   }
 

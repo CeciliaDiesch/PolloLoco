@@ -1,5 +1,5 @@
 class Coins extends MovableObject {
-  y = 50;
+  y = 100;
   width = 200;
   height = 200;
   offset = {
@@ -12,7 +12,7 @@ class Coins extends MovableObject {
     super();
     this.loadImage('../assets/img/8_coin/coin_1.png');
     this.animate();
-    this.x = 200 + Math.random() * 2200;
+    this.x = 200 + Math.random() * 2200 + 200;
   }
 
   animate() {

@@ -33,6 +33,9 @@ window.addEventListener('keydown', (event) => {
   if (event.code == 'ArrowDown') {
     keyboard.DOWN = true;
   }
+  if (event.code == 'KeyX') {
+    keyboard.X = true;
+  }
   console.log(event);
 });
 
@@ -51,6 +54,9 @@ window.addEventListener('keyup', (event) => {
   }
   if (event.code == 'ArrowDown') {
     keyboard.DOWN = false;
+  }
+  if (event.code == 'KeyX') {
+    keyboard.X = false;
   }
   console.log(event);
 });
