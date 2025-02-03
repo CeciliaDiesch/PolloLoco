@@ -71,4 +71,22 @@ class ThrowableObject extends MovableObject {
       console.log('Splash-Flasche wurde aus der Welt entfernt.');
     }, 3000); // Entfernt die Splash-Flasche nach 3 Sekunde
   }
+
+  splash() {
+    // Stoppt Bewegung und die Gravitation und splasht Flasche
+    this.stopFlying();
+
+    console.log('Flasche schlägt auf und splasht');
+    this.splashPlayed = true;
+    this.bottle_sound_splash.play();
+
+    let splashFrame = 0;
+    let splashAnimation = setInterval(() => {
+      this.img = this.imageCache[this.Images_Splash[splashFrame]];
+      splashFrame++;
+      if (splashFrame >= this.Images_Splash.length) {
+        clearInterval(splashAnimation);
+      }
+    }, 100);
+  }
 }

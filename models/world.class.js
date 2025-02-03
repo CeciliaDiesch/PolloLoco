@@ -1,5 +1,6 @@
 class World {
   character = new Character();
+  endboss = new Endboss();
   level = level1; // enemies, clouds, background wird jetzt definiert in level1.js und level.class.js über das level1.
   enemies = level1.enemies;
   clouds = level1.clouds;
@@ -28,9 +29,9 @@ class World {
 
   setWorld() {
     this.character.world = this; //eine instanz auf alle movable objects übergeben, haupstsächlich erstmal auf den character
-
+    this.endboss.world = this;
     this.enemies.forEach((enemy) => {
-      enemy.world = this; // Welt-Referenz an alle Feinde übergeben, einschließlich Endboss
+      enemy.world = this; // Welt-Referenz an alle Feinde übergeben
     });
     this.clouds.forEach((cloud) => {
       cloud.world = this; // Welt-Referenz an alle Clouds übergeben
@@ -88,6 +89,13 @@ class World {
         console.log('collision with Bottle', this.character.bottle);
       }
     });
+    this.throwableObjects.forEach((bottleThrown) => {
+      if (this.endboss.isColliding(bottleThrown)) {
+        this.endboss.hitEndboss(bottleThrown);
+        this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
+        console.log('collision with BottleThrown', this.endboss.bottleHitEndboss);
+      }
+    });
   }
 
   draw() {
@@ -102,11 +110,13 @@ class World {
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
 
     this.addToMap(this.character);
+
+    this.addToMap(this.endboss);
+    this.addObjectToMap(this.throwableObjects);
     this.addObjectToMap(this.level.enemies);
     this.addObjectToMap(this.level.clouds);
     this.addObjectToMap(this.level.bottle);
     this.addObjectToMap(this.level.coins);
-    this.addObjectToMap(this.throwableObjects);
 
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 

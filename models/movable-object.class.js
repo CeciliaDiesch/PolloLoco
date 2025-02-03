@@ -7,9 +7,12 @@ class MovableObject extends DrawableObject {
   coins = 0;
   bottle = 0;
   lastHit = 0;
+  bottleHitEndboss = 100;
   world;
   coin_sound = new Audio('audio/coin.mp3');
   bottle_sound = new Audio('audio/collect.mp3');
+  ouch_sound = new Audio('audio/ouch1.mp3');
+  bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
   splashPlayed = false;
 
   constructor() {
@@ -58,7 +61,7 @@ class MovableObject extends DrawableObject {
     if (this.coins > 100) {
       this.coins = 100;
     }
-    this.world.removeObject(coin); //rufen eine Methode removeCoin() auf der World-Instanz auf, um die Münze zu entfernen.
+    this.world.removeObject(coin); //rufen eine Methode removeObject() auf der World-Instanz auf, um die Münze zu entfernen.
     this.coin_sound.volume = 0.3;
     this.coin_sound.play();
   }
@@ -68,8 +71,22 @@ class MovableObject extends DrawableObject {
     if (this.bottle > 100) {
       this.bottle = 100;
     }
-    this.world.removeObject(bottle); //rufen eine Methode removeCoin() auf der World-Instanz auf, um die Münze zu entfernen.
+    this.world.removeObject(bottle);
     this.playAudioSegment(this.bottle_sound, 0, 1);
+  }
+
+  hitEndboss(bottleThrown) {
+    this.bottleHitEndboss -= 20;
+    if (this.bottleHitEndboss < 0) {
+      this.bottleHitEndboss = 0;
+    }
+    /*this.world.removeObject(bottleThrown);*/
+    /*this.bottle_sound_splash.play();*/
+    this.ouch_sound.play();
+    console.log('endboss getroffen', this.bottleHitEndboss);
+    if (!bottleThrown.splashPlayed) {
+      bottleThrown.splash();
+    }
   }
 
   playAudioSegment(audio, start, duration) {
@@ -144,19 +161,7 @@ class MovableObject extends DrawableObject {
   checkBottleGroundLevel() {
     this.checkGroundInterval = setInterval(() => {
       if (this.y >= 359 && !this.splashPlayed) {
-        this.stopFlying();
-        console.log('flasche auf groundlevel');
-        this.splashPlayed = true;
-        this.bottle_sound_splash.play();
-
-        let splashFrame = 0;
-        let splashAnimation = setInterval(() => {
-          this.img = this.imageCache[this.Images_Splash[splashFrame]];
-          splashFrame++;
-          if (splashFrame >= this.Images_Splash.length) {
-            clearInterval(splashAnimation);
-          }
-        }, 100);
+        this.splash();
 
         this.accelartion = 2.5;
       }

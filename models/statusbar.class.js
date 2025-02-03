@@ -26,22 +26,35 @@ class Statusbar extends DrawableObject {
     '../assets/img/7_statusbars/1_statusbar/3_statusbar_bottle/blue/100.png',
   ];
 
+  Images_Endboss = [
+    '../assets/img/7_statusbars/2_statusbar_endboss/orange/orange0.png',
+    '../assets/img/7_statusbars/2_statusbar_endboss/orange/orange20.png',
+    '../assets/img/7_statusbars/2_statusbar_endboss/orange/orange40.png',
+    '../assets/img/7_statusbars/2_statusbar_endboss/orange/orange60.png',
+    '../assets/img/7_statusbars/2_statusbar_endboss/orange/orange80.png',
+    '../assets/img/7_statusbars/2_statusbar_endboss/orange/orange100.png',
+  ];
+
   percentage = 100;
   percentageCoins = 0;
   percentageBottles = 0;
+  percentageEndboss = 100;
 
   imgHealth;
   imgCoins;
   imgBottles;
+  imgEndboss;
 
   constructor() {
     super();
     this.loadImages(this.Images_Coins);
     this.loadImages(this.Images_Health);
     this.loadImages(this.Images_Bottles);
+    this.loadImages(this.Images_Endboss);
     this.setPercentage(100);
     this.setPercentageCoins(0);
     this.setPercentageBottles(0);
+    this.setPercentageEndboss(100);
     this.x = 40;
     this.y = 0;
     this.width = 200;
@@ -49,7 +62,6 @@ class Statusbar extends DrawableObject {
     console.log('Statusbar imageCache:', this.imageCache);
   }
 
-  //setPercentage(50)
   setPercentage(percentage) {
     this.percentage = percentage;
     let path = this.Images_Health[this.resolveImageIndex(percentage)];
@@ -57,7 +69,6 @@ class Statusbar extends DrawableObject {
     this.imgHealth = this.imageCache[path];
   }
 
-  //setPercentageCoins(50)
   setPercentageCoins(percentageCoins) {
     this.percentageCoins = percentageCoins;
     let pathCoins = this.Images_Coins[this.resolveImageIndex(percentageCoins)];
@@ -65,12 +76,18 @@ class Statusbar extends DrawableObject {
     this.imgCoins = this.imageCache[pathCoins];
   }
 
-  //setPercentageCoins(50)
   setPercentageBottles(percentageBottles) {
     this.percentageBottles = percentageBottles;
     let pathBottles = this.Images_Bottles[this.resolveImageIndex(percentageBottles)];
     console.log('pathBottles is', pathBottles);
     this.imgBottles = this.imageCache[pathBottles];
+  }
+
+  setPercentageEndboss(percentageEndboss) {
+    this.percentageEndboss = percentageEndboss;
+    let pathEndboss = this.Images_Endboss[this.resolveImageIndex(percentageEndboss)];
+    console.log('path is', pathEndboss);
+    this.imgEndboss = this.imageCache[pathEndboss];
   }
 
   resolveImageIndex(percentage) {
@@ -100,6 +117,10 @@ class Statusbar extends DrawableObject {
     if (this.imgBottles) {
       // Positioniere die Münzen-Statusleiste unterhalb der Gesundheitsleiste
       ctx.drawImage(this.imgBottles, this.x, this.y + 100, this.width, this.height);
+    }
+    if (this.imgEndboss) {
+      // Positioniere die Münzen-Statusleiste unterhalb der Gesundheitsleiste
+      ctx.drawImage(this.imgEndboss, this.x + 370, this.y, this.width + 100, this.height + 30);
     }
   }
 }
