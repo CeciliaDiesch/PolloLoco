@@ -57,6 +57,7 @@ window.addEventListener('keyup', (event) => {
   }
   if (event.code == 'KeyX') {
     keyboard.X = false;
+    keyboard.xWasPressed = false;
   }
   console.log(event);
 });

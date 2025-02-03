@@ -53,7 +53,8 @@ class World {
   }
 
   checkThrowObjects() {
-    if (this.keyboard.X && this.character.bottle >= 20) {
+    if (this.keyboard.X && !this.keyboard.xWasPressed && this.character.bottle >= 20) {
+      this.keyboard.xWasPressed = true;
       this.character.bottle -= 20;
       let bottlesFly = new ThrowableObject(this.character.x + 100, this.character.y + 100, this);
       this.throwableObjects.push(bottlesFly);

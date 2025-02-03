@@ -52,7 +52,7 @@ class Statusbar extends DrawableObject {
   //setPercentage(50)
   setPercentage(percentage) {
     this.percentage = percentage;
-    let path = this.Images_Health[this.resolveImageIndex()];
+    let path = this.Images_Health[this.resolveImageIndex(percentage)];
     console.log('path is', path);
     this.imgHealth = this.imageCache[path];
   }
@@ -60,7 +60,7 @@ class Statusbar extends DrawableObject {
   //setPercentageCoins(50)
   setPercentageCoins(percentageCoins) {
     this.percentageCoins = percentageCoins;
-    let pathCoins = this.Images_Coins[this.resolveImageIndexCoins()];
+    let pathCoins = this.Images_Coins[this.resolveImageIndex(percentageCoins)];
     console.log('pathCoins is', pathCoins);
     this.imgCoins = this.imageCache[pathCoins];
   }
@@ -68,55 +68,23 @@ class Statusbar extends DrawableObject {
   //setPercentageCoins(50)
   setPercentageBottles(percentageBottles) {
     this.percentageBottles = percentageBottles;
-    let pathBottles = this.Images_Bottles[this.resolveImageIndexBottles()];
+    let pathBottles = this.Images_Bottles[this.resolveImageIndex(percentageBottles)];
     console.log('pathBottles is', pathBottles);
     this.imgBottles = this.imageCache[pathBottles];
   }
 
-  resolveImageIndexBottles() {
-    if (this.percentageBottles >= 100) {
+  resolveImageIndex(percentage) {
+    if (percentage >= 100) {
       return 5;
-    } else if (this.percentageBottles >= 80) {
+    } else if (percentage >= 80) {
       return 4;
-    } else if (this.percentageBottles >= 60) {
+    } else if (percentage >= 60) {
       return 3;
-    } else if (this.percentageBottles >= 40) {
+    } else if (percentage >= 40) {
       return 2;
-    } else if (this.percentageBottles >= 20) {
+    } else if (percentage >= 20) {
       return 1;
-    } else if (this.percentageBottles == 0) {
-      return 0;
-    }
-  }
-
-  resolveImageIndexCoins() {
-    if (this.percentageCoins >= 100) {
-      return 5;
-    } else if (this.percentageCoins >= 80) {
-      return 4;
-    } else if (this.percentageCoins >= 60) {
-      return 3;
-    } else if (this.percentageCoins >= 40) {
-      return 2;
-    } else if (this.percentageCoins >= 20) {
-      return 1;
-    } else if (this.percentageCoins == 0) {
-      return 0;
-    }
-  }
-
-  resolveImageIndex() {
-    if (this.percentage == 100) {
-      return 5;
-    } else if (this.percentage > 80) {
-      return 4;
-    } else if (this.percentage > 60) {
-      return 3;
-    } else if (this.percentage > 40) {
-      return 2;
-    } else if (this.percentage > 20) {
-      return 1;
-    } else if (this.percentage == 0) {
+    } else {
       return 0;
     }
   }

@@ -3,8 +3,27 @@ class ThrowableObject extends MovableObject {
   width = 50;
   world;
   bottle_sound_flying = new Audio('audio/bottleFly.mp3');
+  bottle_sound_flying_straight = new Audio('audio/bottleFlyStraight.mp3');
+  bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
   moveXInterval;
   checkGroundInterval;
+
+  Images_Throwing = [
+    '../assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
+  ];
+
+  Images_Splash = [
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
+    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
+  ];
 
   constructor(x, y, world, bottle) {
     super();
@@ -13,44 +32,43 @@ class ThrowableObject extends MovableObject {
     this.world = world;
     this.bottle = bottle;
     this.loadImage('../assets/img/6_salsa_bottle/salsa_bottle.png');
-    this.bottle_sound_flying.loop = true; //Loope den Sound
+    this.loadImages(this.Images_Throwing);
+    this.loadImages(this.Images_Splash);
+    this.bottle_sound_flying.loop = true; //Loopt den Sound
+    this.bottle_sound_flying_straight.playbackRate = 0.5;
+    this.animate();
   }
 
   animate() {
     let throwing = setInterval(() => {
-      this.walking_sound.pause();
-
-      if (this.world.keyboard && this.world.keyboard.X) {
-        //wenn pepe wieder am ground ist, hat er ein speedY von -22.5, also ab da, kann er wieder springen
-        this.throw(100, 150);
-        this.walking_sound.play();
+      this.bottle_sound_flying.pause();
+      if (this.world.keyboard && this.world.keyboard.X && this.isAboveGround()) {
+        console.log('x wurde gedrückt');
+        this.playAnimation(this.Images_Throwing);
+        this.bottle_sound_flying.play();
+        this.splashPlayed = false;
       }
-
-      /*this.world.camera_x = -this.x + 100;*/
-    }, 1000 / 10);
-    /*intervalIds.push(throwing);*/
+    }, 65);
   }
 
   throw() {
     this.bottle_sound_flying.currentTime = 0;
-    this.bottle_sound_flying.play();
+    this.bottle_sound_flying_straight.play();
     super.throw();
   }
 
   stopFlying() {
     // Pausiere den Flug-Sound
     this.bottle_sound_flying.pause();
+    this.bottle_sound_flying_straight.pause();
     this.bottle_sound_flying.currentTime = 0; // Setze den Startpunkt zurück
-
-    this.loadImage(
-      '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png'
-    );
+    this.bottle_sound_flying_straight.currentTime = 0;
     super.stopFlying();
 
-    // Optional: Setze eine kurze Verzögerung, bevor die Splash-Flasche entfernt wird
+    // Setzt eine kurze Verzögerung, bevor die Splash-Flasche entfernt wird
     setTimeout(() => {
       this.world.removeObject(this); // Rufe die allgemeine stopFlying() Methode aus MovableObject auf
       console.log('Splash-Flasche wurde aus der Welt entfernt.');
-    }, 3000); // Entfernt die Splash-Flasche nach 1 Sekunde
+    }, 3000); // Entfernt die Splash-Flasche nach 3 Sekunde
   }
 }

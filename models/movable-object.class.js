@@ -10,6 +10,7 @@ class MovableObject extends DrawableObject {
   world;
   coin_sound = new Audio('audio/coin.mp3');
   bottle_sound = new Audio('audio/collect.mp3');
+  splashPlayed = false;
 
   constructor() {
     super();
@@ -74,7 +75,6 @@ class MovableObject extends DrawableObject {
   playAudioSegment(audio, start, duration) {
     audio.currentTime = start;
     audio.play();
-
     setTimeout(() => {
       audio.pause();
       audio.currentTime = start; // Optional: Setze den Startpunkt zurück
@@ -115,7 +115,6 @@ class MovableObject extends DrawableObject {
     let step = 1; // Schrittgröße
     let minY = 30; // Minimaler y-Wert
     let maxY = 50; // Maximaler y-Wert
-
     setInterval(() => {
       this.y += direction * step;
       if (this.y <= minY) {
@@ -127,6 +126,7 @@ class MovableObject extends DrawableObject {
       }
     }, 1000 / 60); // 60 Mal pro Sekunde für flüssige Bewegung
   }
+
   throw() {
     this.bottle -= 20;
     if (this.bottle < 100) {
@@ -137,11 +137,39 @@ class MovableObject extends DrawableObject {
     this.moveXInterval = setInterval(() => {
       this.x += 10;
     }, 25);
+    this.checkBottleGroundLevel();
+    this.checkReleaseX();
+  }
+
+  checkBottleGroundLevel() {
     this.checkGroundInterval = setInterval(() => {
-      if (this.y >= 360) {
+      if (this.y >= 359 && !this.splashPlayed) {
         this.stopFlying();
+        console.log('flasche auf groundlevel');
+        this.splashPlayed = true;
+        this.bottle_sound_splash.play();
+
+        let splashFrame = 0;
+        let splashAnimation = setInterval(() => {
+          this.img = this.imageCache[this.Images_Splash[splashFrame]];
+          splashFrame++;
+          if (splashFrame >= this.Images_Splash.length) {
+            clearInterval(splashAnimation);
+          }
+        }, 100);
+
+        this.accelartion = 2.5;
       }
-    }, 100);
+    }, 1);
+  }
+
+  checkReleaseX() {
+    this.sinkInterval = setInterval(() => {
+      if (this.world.keyboard && !this.world.keyboard.X && this.isAboveGround()) {
+        console.log('x wurde losgelassen und Flasche fliegt runter');
+        this.accelartion = 10;
+      }
+    }, 200);
   }
 
   stopFlying() {
