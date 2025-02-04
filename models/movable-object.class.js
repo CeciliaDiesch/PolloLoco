@@ -11,9 +11,9 @@ class MovableObject extends DrawableObject {
   world;
   coin_sound = new Audio('audio/coin.mp3');
   bottle_sound = new Audio('audio/collect.mp3');
-  ouch_sound = new Audio('audio/ouch1.mp3');
   bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
   splashPlayed = false;
+  bottleHitCounted = false;
 
   constructor() {
     super();
@@ -49,6 +49,7 @@ class MovableObject extends DrawableObject {
 
   hit() {
     this.energy -= 5;
+    this.hitChicken_sound.play();
     if (this.energy < 0) {
       this.energy = 0;
     } else {
@@ -67,7 +68,7 @@ class MovableObject extends DrawableObject {
   }
 
   hitBottle(bottle) {
-    this.bottle += 20;
+    this.bottle += 12.5;
     if (this.bottle > 100) {
       this.bottle = 100;
     }
@@ -80,10 +81,18 @@ class MovableObject extends DrawableObject {
     if (this.bottleHitEndboss < 0) {
       this.bottleHitEndboss = 0;
     }
-    /*this.world.removeObject(bottleThrown);*/
-    /*this.bottle_sound_splash.play();*/
     this.ouch_sound.play();
     console.log('endboss getroffen', this.bottleHitEndboss);
+    this.paused = true;
+    let angryInterval = setInterval(() => {
+      this.playAnimation(this.Images_Angry);
+    }, 300); // Zum Beispiel alle 300ms
+
+    // Nach 1 Sekunde soll die Animation beendet werden und der Boss wieder weiterlaufen.
+    setTimeout(() => {
+      clearInterval(angryInterval);
+      this.paused = false;
+    }, 2000);
     if (!bottleThrown.splashPlayed) {
       bottleThrown.splash();
     }
@@ -162,7 +171,6 @@ class MovableObject extends DrawableObject {
     this.checkGroundInterval = setInterval(() => {
       if (this.y >= 359 && !this.splashPlayed) {
         this.splash();
-
         this.accelartion = 2.5;
       }
     }, 1);

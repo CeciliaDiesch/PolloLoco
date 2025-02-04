@@ -8,13 +8,12 @@ class Character extends MovableObject {
     left: 40,
     right: 35,
   };
-  /* für ein korrigierten character drawFrame () { ctx.rect(this.x + this.offset.left, this.y + this.offset.bottom, this.width - this.offset.right,...)}  in movable-object
-   offset = {
-    top: 110,
-    bottom: 100,
-    left: 20,
-    right: 40,
-  };*/
+  world;
+  hasStartedDeadAnimation = false;
+  gameOver_sound = new Audio('audio/gameOver.mp3');
+  hitChicken_sound = new Audio('audio/hitChicken.mp3');
+  hitEndboss_sound = new Audio('audio/hitEndboss.mp3');
+  walking_sound = new Audio('audio/walking4.mp3');
 
   Images_Walking = [
     '../assets/img/2_character_pepe/2_walk/W-21.png',
@@ -53,9 +52,6 @@ class Character extends MovableObject {
     '../assets/img/2_character_pepe/5_dead/D-57.png',
   ];
 
-  world;
-  walking_sound = new Audio('audio/walking4.mp3');
-
   constructor() {
     super();
     this.loadImage('../assets/img/2_character_pepe/2_walk/W-22.png');
@@ -63,8 +59,6 @@ class Character extends MovableObject {
     this.loadImages(this.Images_Jumping);
     this.loadImages(this.Images_Hurt);
     this.loadImages(this.Images_Dead);
-    /*this.walking_sound.playbackRate = 4;*/
-
     this.animate();
     this.applyGravity();
   }
@@ -73,7 +67,11 @@ class Character extends MovableObject {
     let moving = setInterval(() => {
       //Bewegung nach rechts in einem extra INtervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
       this.walking_sound.pause();
-      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x) {
+      if (
+        this.world.keyboard.RIGHT &&
+        this.x < this.world.level.level_end_x &&
+        this.x < this.world.endboss.x - 10
+      ) {
         this.moveRight();
         this.otherDirection = false;
         this.walking_sound.play();
@@ -95,9 +93,20 @@ class Character extends MovableObject {
     intervalIds.push(moving);
 
     let animation = setInterval(() => {
-      if (this.isDead()) {
-        this.playAnimation(this.Images_Dead);
-        this.stopGame();
+      if (this.isDead() && !this.hasStartedDeadAnimation) {
+        this.hasStartedDeadAnimation = true;
+        let deadFrame = 0;
+        let deadAnimation = setInterval(() => {
+          this.img = this.imageCache[this.Images_Dead[deadFrame]];
+          deadFrame++;
+          if (deadFrame >= this.Images_Dead.length) {
+            this.gameOver_sound.play();
+            clearInterval(deadAnimation);
+          }
+        }, 300);
+        setTimeout(() => {
+          this.stopGame();
+        }, 2000);
       } else if (this.isHurt()) {
         this.playAnimation(this.Images_Hurt);
       } else if (this.isAboveGround()) {

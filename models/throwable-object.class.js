@@ -78,6 +78,7 @@ class ThrowableObject extends MovableObject {
 
     console.log('Flasche schlägt auf und splasht');
     this.splashPlayed = true;
+    this.bottleHitCounted = true;
     this.bottle_sound_splash.play();
 
     let splashFrame = 0;

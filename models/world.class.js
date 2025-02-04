@@ -48,7 +48,7 @@ class World {
       //check collisions
       this.checkCollisions();
       this.checkThrowObjects();
-    }, 1000 / 5);
+    }, 1000 / 20);
     intervalIds.push(run);
     console.log('InetervalArray is', intervalIds);
   }
@@ -90,12 +90,18 @@ class World {
       }
     });
     this.throwableObjects.forEach((bottleThrown) => {
-      if (this.endboss.isColliding(bottleThrown)) {
+      if (!bottleThrown.bottleHitCounted && this.endboss.isColliding(bottleThrown)) {
         this.endboss.hitEndboss(bottleThrown);
         this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
         console.log('collision with BottleThrown', this.endboss.bottleHitEndboss);
       }
     });
+    if (this.character.isColliding(this.endboss)) {
+      this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
+      this.statusbar.setPercentage(this.character.energy);
+      console.log('collision Endboss with Character', this.character.energy);
+      this.character.hitEndboss_sound.play();
+    }
   }
 
   draw() {
@@ -109,9 +115,8 @@ class World {
     this.addToMap(this.statusbar);
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
 
-    this.addToMap(this.character);
-
     this.addToMap(this.endboss);
+    this.addToMap(this.character);
     this.addObjectToMap(this.throwableObjects);
     this.addObjectToMap(this.level.enemies);
     this.addObjectToMap(this.level.clouds);

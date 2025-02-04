@@ -5,10 +5,14 @@ class Endboss extends MovableObject {
   offset = {
     top: 75,
     bottom: 100,
-    left: 25,
+    left: 60,
     right: 25,
   };
   world;
+  endbossWalk = false;
+  hasStartedBossMovement = false;
+  ouch_sound = new Audio('audio/ouch1.mp3');
+  paused = false;
 
   Images_Walking = [
     '../assets/img/4_enemie_boss_chicken/1_walk/G1.png',
@@ -33,18 +37,51 @@ class Endboss extends MovableObject {
     /*this.loadImages(this.Images_Walking);*/
     super();
     this.loadImage(this.Images_Angry[0]);
-    this.x = 2500;
+    this.x = 2350;
 
     this.loadImages(this.Images_Angry);
+    this.loadImages(this.Images_Walking);
+    this.speed = 0.1;
+    this.previousX = this.x;
 
     this.animate();
   }
 
   animate() {
-    setInterval(() => {
-      if (this.world && this.world.camera_x <= -2150) {
+    this.EndbossStartAnimationInterval = setInterval(() => {
+      if (this.world && this.world.camera_x <= -1900) {
         this.playAnimation(this.Images_Angry);
+        this.world.statusbar.showEndbossStatusbar = true;
       }
     }, 300);
+    intervalIds.push(this.EndbossStartAnimationInterval);
+
+    this.checkBossStart = setInterval(() => {
+      if (this.world && this.world.camera_x <= -1900 && !this.hasStartedBossMovement) {
+        if (this.paused) return;
+        this.hasStartedBossMovement = true;
+        setTimeout(() => {
+          console.log('3 sekunden vergangen');
+          this.EndbossMovementInterval = setInterval(() => {
+            if (!this.paused) {
+              this.moveLeft();
+            }
+            clearInterval(this.EndbossStartAnimationInterval);
+          }, 1000 / 500);
+          intervalIds.push(this.EndbossMovementInterval);
+        }, 3000);
+      }
+    }, 100);
+    /*intervalIds.push(this.checkBossStart);*/
+
+    this.EndbossWalkAnimationInterval = setInterval(() => {
+      if (this.paused) {
+        return;
+      }
+      if (this.x !== this.previousX) {
+        this.playAnimation(this.Images_Walking);
+      }
+    }, 300);
+    intervalIds.push(this.EndbossWalkAnimationInterval);
   }
 }

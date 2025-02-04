@@ -1,4 +1,6 @@
 class Statusbar extends DrawableObject {
+  showEndbossStatusbar = false;
+
   Images_Health = [
     '../assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/0.png',
     '../assets/img/7_statusbars/1_statusbar/2_statusbar_health/blue/20.png',
@@ -118,7 +120,7 @@ class Statusbar extends DrawableObject {
       // Positioniere die Münzen-Statusleiste unterhalb der Gesundheitsleiste
       ctx.drawImage(this.imgBottles, this.x, this.y + 100, this.width, this.height);
     }
-    if (this.imgEndboss) {
+    if (this.showEndbossStatusbar && this.imgEndboss) {
       // Positioniere die Münzen-Statusleiste unterhalb der Gesundheitsleiste
       ctx.drawImage(this.imgEndboss, this.x + 370, this.y, this.width + 100, this.height + 30);
     }
