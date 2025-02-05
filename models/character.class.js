@@ -9,8 +9,8 @@ class Character extends MovableObject {
     right: 35,
   };
   world;
-  hasStartedDeadAnimation = false;
-  gameOver_sound = new Audio('audio/gameOver.mp3');
+  lastMovementTime = Date.now();
+
   hitChicken_sound = new Audio('audio/hitChicken.mp3');
   hitEndboss_sound = new Audio('audio/hitEndboss.mp3');
   walking_sound = new Audio('audio/walking4.mp3');
@@ -22,6 +22,32 @@ class Character extends MovableObject {
     '../assets/img/2_character_pepe/2_walk/W-24.png',
     '../assets/img/2_character_pepe/2_walk/W-25.png',
     '../assets/img/2_character_pepe/2_walk/W-26.png',
+  ];
+
+  Images_Idle = [
+    '../assets/img/2_character_pepe/1_idle/idle/I-1.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-2.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-3.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-4.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-5.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-6.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-7.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-8.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-9.png',
+    '../assets/img/2_character_pepe/1_idle/idle/I-10.png',
+  ];
+
+  Images_Wait = [
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-11.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-12.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-13.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-14.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-15.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-16.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-17.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-18.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-19.png',
+    '../assets/img/2_character_pepe/1_idle/long_idle/I-20.png',
   ];
 
   Images_Jumping = [
@@ -56,17 +82,22 @@ class Character extends MovableObject {
     super();
     this.loadImage('../assets/img/2_character_pepe/2_walk/W-22.png');
     this.loadImages(this.Images_Walking);
+    this.loadImages(this.Images_Idle);
+    this.loadImages(this.Images_Wait);
     this.loadImages(this.Images_Jumping);
     this.loadImages(this.Images_Hurt);
     this.loadImages(this.Images_Dead);
     this.animate();
     this.applyGravity();
+    this.previousX = this.x;
+    this.previousY = this.y;
   }
 
   animate() {
     let moving = setInterval(() => {
-      //Bewegung nach rechts in einem extra INtervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
+      //Bewegung nach rechts in einem extra Intervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
       this.walking_sound.pause();
+      let moved = false;
       if (
         this.world.keyboard.RIGHT &&
         this.x < this.world.level.level_end_x &&
@@ -75,55 +106,54 @@ class Character extends MovableObject {
         this.moveRight();
         this.otherDirection = false;
         this.walking_sound.play();
+        moved = true;
       }
 
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
         this.walking_sound.play();
+        moved = true;
       }
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         //wenn pepe wieder am ground ist, hat er ein speedY von -22.5, also ab da, kann er wieder springen
         this.jump();
+        moved = true;
+      }
+
+      if (moved) {
+        // Wenn sich etwas bewegt, aktualisiere den Zeitstempel
+        this.lastMovementTime = Date.now();
       }
 
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
     intervalIds.push(moving);
 
-    let animation = setInterval(() => {
-      if (this.isDead() && !this.hasStartedDeadAnimation) {
-        this.hasStartedDeadAnimation = true;
-        let deadFrame = 0;
-        let deadAnimation = setInterval(() => {
-          this.img = this.imageCache[this.Images_Dead[deadFrame]];
-          deadFrame++;
-          if (deadFrame >= this.Images_Dead.length) {
-            this.gameOver_sound.play();
-            clearInterval(deadAnimation);
-          }
-        }, 300);
-        setTimeout(() => {
-          this.stopGame();
-        }, 2000);
-      } else if (this.isHurt()) {
-        this.playAnimation(this.Images_Hurt);
-      } else if (this.isAboveGround()) {
-        this.playAnimation(this.Images_Jumping);
-      } else {
-        if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-          //das logische Oder || um entweder das eine true oder das andere true ist
-          //walk animation an einem standort mit Bilderwechsel
-          this.playAnimation(this.Images_Walking);
-        }
+    let Animation = setInterval(() => {
+      if (this.checkDeadAnimation()) {
+      } else if (this.checkHurtAnimation()) {
+      } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
+        this.playAnimation(this.Images_Walking);
       }
     }, 50);
-    intervalIds.push(animation);
-  }
+    intervalIds.push(Animation);
 
-  stopGame() {
-    intervalIds.forEach(clearInterval);
+    let waitAnimation = setInterval(() => {
+      if (Date.now() - this.lastMovementTime >= 5000) {
+        this.playAnimation(this.Images_Wait);
+      }
+      if (Date.now() - this.lastMovementTime >= 100 && Date.now() - this.lastMovementTime < 5000) {
+        this.playAnimation(this.Images_Idle);
+      }
+    }, 500);
+    intervalIds.push(waitAnimation);
+
+    let jumpAnimation = setInterval(() => {
+      this.checkJumpAnimation();
+    }, 80);
+    intervalIds.push(jumpAnimation);
   }
 
   jump() {

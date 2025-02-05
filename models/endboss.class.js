@@ -11,6 +11,7 @@ class Endboss extends MovableObject {
   world;
   endbossWalk = false;
   hasStartedBossMovement = false;
+
   ouch_sound = new Audio('audio/ouch1.mp3');
   paused = false;
 
@@ -32,15 +33,27 @@ class Endboss extends MovableObject {
     '../assets/img/4_enemie_boss_chicken/2_alert/G12.png',
   ];
 
+  Images_Hurt = [
+    '../assets/img/4_enemie_boss_chicken/4_hurt/G21.png',
+    '../assets/img/4_enemie_boss_chicken/4_hurt/G22.png',
+    '../assets/img/4_enemie_boss_chicken/4_hurt/G23.png',
+  ];
+
+  Images_Dead = [
+    '../assets/img/4_enemie_boss_chicken/5_dead/G24.png',
+    '../assets/img/4_enemie_boss_chicken/5_dead/G25.png',
+    '../assets/img/4_enemie_boss_chicken/5_dead/G26.png',
+  ];
+
   constructor() {
-    /*super().loadImage(this.Images_Walking[0]);*/
-    /*this.loadImages(this.Images_Walking);*/
     super();
     this.loadImage(this.Images_Angry[0]);
     this.x = 2350;
 
     this.loadImages(this.Images_Angry);
     this.loadImages(this.Images_Walking);
+    this.loadImages(this.Images_Hurt);
+    this.loadImages(this.Images_Dead);
     this.speed = 0.1;
     this.previousX = this.x;
 
@@ -48,40 +61,33 @@ class Endboss extends MovableObject {
   }
 
   animate() {
-    this.EndbossStartAnimationInterval = setInterval(() => {
-      if (this.world && this.world.camera_x <= -1900) {
+    this.EndbossAnimationInterval = setInterval(() => {
+      if (this.checkDeadAnimation()) {
+      } else if (this.x == this.previousX && this.world && this.world.camera_x <= -1900) {
         this.playAnimation(this.Images_Angry);
         this.world.statusbar.showEndbossStatusbar = true;
+      } else if (this.paused) {
+        this.playAnimation(this.Images_Hurt);
+      } else if (this.x !== this.previousX && !this.paused) {
+        this.playAnimation(this.Images_Walking);
       }
     }, 300);
-    intervalIds.push(this.EndbossStartAnimationInterval);
+    intervalIds.push(this.EndbossAnimationInterval);
 
     this.checkBossStart = setInterval(() => {
       if (this.world && this.world.camera_x <= -1900 && !this.hasStartedBossMovement) {
         if (this.paused) return;
         this.hasStartedBossMovement = true;
         setTimeout(() => {
-          console.log('3 sekunden vergangen');
           this.EndbossMovementInterval = setInterval(() => {
             if (!this.paused) {
               this.moveLeft();
             }
-            clearInterval(this.EndbossStartAnimationInterval);
           }, 1000 / 500);
           intervalIds.push(this.EndbossMovementInterval);
         }, 3000);
       }
     }, 100);
-    /*intervalIds.push(this.checkBossStart);*/
-
-    this.EndbossWalkAnimationInterval = setInterval(() => {
-      if (this.paused) {
-        return;
-      }
-      if (this.x !== this.previousX) {
-        this.playAnimation(this.Images_Walking);
-      }
-    }, 300);
-    intervalIds.push(this.EndbossWalkAnimationInterval);
+    intervalIds.push(this.checkBossStart);
   }
 }

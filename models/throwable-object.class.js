@@ -58,7 +58,6 @@ class ThrowableObject extends MovableObject {
   }
 
   stopFlying() {
-    // Pausiere den Flug-Sound
     this.bottle_sound_flying.pause();
     this.bottle_sound_flying_straight.pause();
     this.bottle_sound_flying.currentTime = 0; // Setze den Startpunkt zurück
@@ -75,12 +74,10 @@ class ThrowableObject extends MovableObject {
   splash() {
     // Stoppt Bewegung und die Gravitation und splasht Flasche
     this.stopFlying();
-
     console.log('Flasche schlägt auf und splasht');
     this.splashPlayed = true;
     this.bottleHitCounted = true;
     this.bottle_sound_splash.play();
-
     let splashFrame = 0;
     let splashAnimation = setInterval(() => {
       this.img = this.imageCache[this.Images_Splash[splashFrame]];
@@ -89,5 +86,14 @@ class ThrowableObject extends MovableObject {
         clearInterval(splashAnimation);
       }
     }, 100);
+  }
+
+  checkBottleGroundLevel() {
+    this.checkGroundInterval = setInterval(() => {
+      if (this.y >= 359 && !this.splashPlayed) {
+        this.splash();
+        this.accelartion = 2.5;
+      }
+    }, 1);
   }
 }

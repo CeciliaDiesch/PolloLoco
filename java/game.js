@@ -13,8 +13,6 @@ i = 1;
 function init() {
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard); // wir übergeben die variable canvas und keyboard an unsere Welt
-
-  console.log('My Character is', world.character);
 }
 
 window.addEventListener('keydown', (event) => {
@@ -36,7 +34,7 @@ window.addEventListener('keydown', (event) => {
   if (event.code == 'KeyX') {
     keyboard.X = true;
   }
-  console.log(event);
+  /*console.log(event);*/
 });
 
 window.addEventListener('keyup', (event) => {
@@ -59,5 +57,5 @@ window.addEventListener('keyup', (event) => {
     keyboard.X = false;
     keyboard.xWasPressed = false;
   }
-  console.log(event);
+  /*console.log(event);*/
 });

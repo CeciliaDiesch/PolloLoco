@@ -12,8 +12,11 @@ class MovableObject extends DrawableObject {
   coin_sound = new Audio('audio/coin.mp3');
   bottle_sound = new Audio('audio/collect.mp3');
   bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
+  gameOver_sound = new Audio('audio/gameOver.mp3');
+  jippie_sound = new Audio('audio/jippie.mp3');
   splashPlayed = false;
   bottleHitCounted = false;
+  hasStartedDeadAnimation = false;
 
   constructor() {
     super();
@@ -35,6 +38,14 @@ class MovableObject extends DrawableObject {
     } else {
       return this.y < 180; //gibt an, sobald pepe wieder bis auf ground level runtergefallen ist
     }
+  }
+
+  checkJumpAnimation() {
+    if (this.isAboveGround()) {
+      this.playAnimation(this.Images_Jumping);
+      return true;
+    }
+    return false;
   }
 
   isColliding(obj) {
@@ -84,13 +95,8 @@ class MovableObject extends DrawableObject {
     this.ouch_sound.play();
     console.log('endboss getroffen', this.bottleHitEndboss);
     this.paused = true;
-    let angryInterval = setInterval(() => {
-      this.playAnimation(this.Images_Angry);
-    }, 300); // Zum Beispiel alle 300ms
-
     // Nach 1 Sekunde soll die Animation beendet werden und der Boss wieder weiterlaufen.
     setTimeout(() => {
-      clearInterval(angryInterval);
       this.paused = false;
     }, 2000);
     if (!bottleThrown.splashPlayed) {
@@ -108,13 +114,52 @@ class MovableObject extends DrawableObject {
   }
 
   isHurt() {
-    let timepassed = new Date().getTime() - this.lastHit; // Difference in ms
+    let timepassed = new Date().getTime() - this.lastHit; // Difference in ms von aktueller Zeit zu der letzten gespeicherten Zeit beim Hit oder falls noch kein Hit war, dann 0
     timepassed = timepassed / 1000; // Difference in s
-    return timepassed < 1; // wird als true zurück gegeben wenn differenz kleiner als 5 sekunden
+    return timepassed < 0.5; // wird als true zurück gegeben wenn differenz kleiner als 0.5 sekunden
+  }
+
+  checkHurtAnimation() {
+    if (this.isHurt()) {
+      this.playAnimation(this.Images_Hurt);
+      return true;
+    }
+    return false;
   }
 
   isDead() {
-    return this.energy == 0;
+    if (this.bottleHitEndboss == 0 || this.energy == 0) {
+      return true;
+    }
+  }
+
+  checkDeadAnimation() {
+    if (this.isDead() && !this.hasStartedDeadAnimation) {
+      this.hasStartedDeadAnimation = true;
+      let deadFrame = 0;
+      let deadAnimation = setInterval(() => {
+        this.img = this.imageCache[this.Images_Dead[deadFrame]];
+        deadFrame++;
+        if (deadFrame >= this.Images_Dead.length) {
+          this.gameOver_sound.play();
+          clearInterval(deadAnimation);
+          clearInterval(this.checkBossStart);
+          clearInterval(this.EndbossAnimationInterval);
+        }
+      }, 300);
+      setTimeout(() => {
+        if (this.bottleHitEndboss == 0) {
+          this.jippie_sound.play();
+        }
+        this.stopGame();
+      }, 2000);
+      return true;
+    }
+    return false;
+  }
+
+  stopGame() {
+    intervalIds.forEach(clearInterval);
   }
 
   playAnimation(images) {
@@ -167,15 +212,6 @@ class MovableObject extends DrawableObject {
     this.checkReleaseX();
   }
 
-  checkBottleGroundLevel() {
-    this.checkGroundInterval = setInterval(() => {
-      if (this.y >= 359 && !this.splashPlayed) {
-        this.splash();
-        this.accelartion = 2.5;
-      }
-    }, 1);
-  }
-
   checkReleaseX() {
     this.sinkInterval = setInterval(() => {
       if (this.world.keyboard && !this.world.keyboard.X && this.isAboveGround()) {
@@ -186,15 +222,10 @@ class MovableObject extends DrawableObject {
   }
 
   stopFlying() {
-    // Stoppe die horizontale Bewegung
+    // Stoppe die horizontale Bewegung, Gravitation, Bodenkollisionsüberwachung
     clearInterval(this.moveXInterval);
-
-    // Stoppe die Gravitation
     clearInterval(this.gravityInterval);
-
-    // Stoppe die Bodenkollisionsüberwachung
     clearInterval(this.checkGroundInterval);
-
     /*this.world.removeObject(this);*/ // Verwende direkt 'world.removeObject(this)'
     console.log('Flasche wurde aus der Welt entfernt.');
   }
