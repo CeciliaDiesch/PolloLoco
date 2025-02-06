@@ -102,7 +102,6 @@ class World {
       this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
       this.statusbar.setPercentage(this.character.energy);
       console.log('collision Endboss with Character', this.character.energy);
-      this.character.hitEndboss_sound.play();
     }
     if (this.character.isColliding(this.endboss) && this.character.isAboveGround()) {
       if (!this.characterAttackCounted) {
@@ -110,6 +109,7 @@ class World {
         this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
         console.log('collision with attacking Character', this.endboss.bottleHitEndboss);
         this.characterAttackCounted = true;
+        this.character.hitEndboss_sound.play();
       }
       setTimeout(() => {
         this.characterAttackCounted = false;

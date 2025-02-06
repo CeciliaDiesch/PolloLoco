@@ -42,7 +42,12 @@ class ThrowableObject extends MovableObject {
   animate() {
     let throwing = setInterval(() => {
       this.bottle_sound_flying.pause();
-      if (this.world.keyboard && this.world.keyboard.X && this.isAboveGround()) {
+      if (
+        this.world.keyboard &&
+        this.world.keyboard.X &&
+        this.isAboveGround() &&
+        !this.splashPlayed
+      ) {
         console.log('x wurde gedrückt');
         this.playAnimation(this.Images_Throwing);
         this.bottle_sound_flying.play();

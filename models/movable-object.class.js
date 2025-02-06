@@ -13,6 +13,7 @@ class MovableObject extends DrawableObject {
   bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
   gameOver_sound = new Audio('audio/gameOver.mp3');
   jippie_sound = new Audio('audio/jippie.mp3');
+  ohNo_sound = new Audio('audio/ohNo.mp3');
   splashPlayed = false;
   bottleHitCounted = false;
   hasStartedDeadAnimation = false;
@@ -78,7 +79,7 @@ class MovableObject extends DrawableObject {
   }
 
   hitBottle(bottle) {
-    this.bottle += 12.5;
+    this.bottle += 20;
     if (this.bottle > 100) {
       this.bottle = 100;
     }
@@ -91,13 +92,14 @@ class MovableObject extends DrawableObject {
     if (this.bottleHitEndboss < 0) {
       this.bottleHitEndboss = 0;
     }
+
     this.ouch_sound.play();
     console.log('endboss getroffen', this.bottleHitEndboss);
     this.paused = true;
     // Nach 1 Sekunde soll die Animation beendet werden und der Boss wieder weiterlaufen.
     setTimeout(() => {
       this.paused = false;
-    }, 2000);
+    }, 1000);
     if (bottleThrown && !bottleThrown.splashPlayed) {
       bottleThrown.splash();
     }
@@ -135,23 +137,28 @@ class MovableObject extends DrawableObject {
   checkDeadAnimation() {
     if (this.isDead() && !this.hasStartedDeadAnimation) {
       this.hasStartedDeadAnimation = true;
+      clearInterval(this.checkBossStart);
+      clearInterval(this.EndbossAnimationInterval);
       let deadFrame = 0;
       let deadAnimation = setInterval(() => {
         this.img = this.imageCache[this.Images_Dead[deadFrame]];
         deadFrame++;
         if (deadFrame >= this.Images_Dead.length) {
-          this.gameOver_sound.play();
           clearInterval(deadAnimation);
-          clearInterval(this.checkBossStart);
-          clearInterval(this.EndbossAnimationInterval);
         }
-      }, 300);
+      }, 500);
+      setTimeout(() => {
+        this.stopGame();
+      }, 2000);
       setTimeout(() => {
         if (this.bottleHitEndboss == 0) {
           this.jippie_sound.play();
         }
-        this.stopGame();
-      }, 2000);
+        if (this.energy == 0) {
+          this.ohNo_sound.play();
+          this.gameOver_sound.play();
+        }
+      }, 3000);
       return true;
     }
     return false;
