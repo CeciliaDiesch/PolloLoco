@@ -1,6 +1,5 @@
 class MovableObject extends DrawableObject {
   speed = 0.1;
-  otherDirection = false;
   speedY = 0;
   accelartion = 2.5;
   energy = 100;
@@ -99,7 +98,7 @@ class MovableObject extends DrawableObject {
     setTimeout(() => {
       this.paused = false;
     }, 2000);
-    if (!bottleThrown.splashPlayed) {
+    if (bottleThrown && !bottleThrown.splashPlayed) {
       bottleThrown.splash();
     }
   }
@@ -205,8 +204,16 @@ class MovableObject extends DrawableObject {
     }
     this.speedY = 30;
     this.gravityInterval = this.applyGravity(); //Starte die Gravitation und speichere die Interval-ID
+    if (this.otherDirection === true) {
+      this.x -= 50;
+    }
+
     this.moveXInterval = setInterval(() => {
-      this.x += 10;
+      if (this.otherDirection === true) {
+        this.x -= 10;
+      } else {
+        this.x += 10;
+      }
     }, 25);
     this.checkBottleGroundLevel();
     this.checkReleaseX();

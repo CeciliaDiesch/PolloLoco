@@ -18,6 +18,7 @@ class World {
     this.ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
     this.canvas = canvas;
     this.keyboard = keyboard;
+    this.characterAttackCounted = false;
     /*const canvasWidth = this.canvas.width; // Canvas-Breite holen
     this.background = new Background1(canvasWidth); // Canvas-Breite an Background1 übergeben
     */
@@ -57,7 +58,8 @@ class World {
     if (this.keyboard.X && !this.keyboard.xWasPressed && this.character.bottle >= 20) {
       this.keyboard.xWasPressed = true;
       this.character.bottle -= 20;
-      let bottlesFly = new ThrowableObject(this.character.x + 100, this.character.y + 100, this);
+      let bottlesFly = new ThrowableObject(this.character.x + 50, this.character.y + 100, this);
+      bottlesFly.otherDirection = this.character.otherDirection;
       this.throwableObjects.push(bottlesFly);
 
       this.throwableObjects.world = this; // Welt-Referenz an alle throwableObjects übergeben
@@ -102,19 +104,29 @@ class World {
       console.log('collision Endboss with Character', this.character.energy);
       this.character.hitEndboss_sound.play();
     }
+    if (this.character.isColliding(this.endboss) && this.character.isAboveGround()) {
+      if (!this.characterAttackCounted) {
+        this.endboss.hitEndboss();
+        this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
+        console.log('collision with attacking Character', this.endboss.bottleHitEndboss);
+        this.characterAttackCounted = true;
+      }
+      setTimeout(() => {
+        this.characterAttackCounted = false;
+      }, 3000);
+    }
   }
 
   draw() {
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //cleared das ganze canvas um nur neue position von inhalten anzuzeigen
 
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
-
     this.addObjectToMap(this.level.background);
-
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
-    this.addToMap(this.statusbar);
-    this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
 
+    this.addToMap(this.statusbar);
+
+    this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
     this.addToMap(this.endboss);
     this.addToMap(this.character);
     this.addObjectToMap(this.throwableObjects);
@@ -122,7 +134,6 @@ class World {
     this.addObjectToMap(this.level.clouds);
     this.addObjectToMap(this.level.bottle);
     this.addObjectToMap(this.level.coins);
-
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
     //hiermit wird die funktion so oft aufgerufen in der sekunde, wie die grafikkarte es zulässt

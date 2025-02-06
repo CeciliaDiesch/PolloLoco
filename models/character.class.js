@@ -10,6 +10,7 @@ class Character extends MovableObject {
   };
   world;
   lastMovementTime = Date.now();
+  otherDirection = false;
 
   hitChicken_sound = new Audio('audio/hitChicken.mp3');
   hitEndboss_sound = new Audio('audio/hitEndboss.mp3');
