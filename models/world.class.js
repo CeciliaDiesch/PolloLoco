@@ -13,8 +13,6 @@ class World {
   ctx;
   keyboard;
   camera_x = 0;
-
-  endscreen = new EndScreen();
   gameOver = false;
 
   constructor(canvas, keyboard) {
@@ -29,6 +27,8 @@ class World {
     this.draw();
     this.setWorld();
     this.run();
+    this.lost = false;
+    this.endscreen = new EndScreen(this);
   }
 
   setWorld() {
@@ -128,9 +128,6 @@ class World {
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
     this.addToMap(this.statusbar);
-    if (this.gameOver) {
-      this.addToMap(this.endscreen);
-    }
 
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
     this.addToMap(this.endboss);
@@ -141,6 +138,10 @@ class World {
     this.addObjectToMap(this.level.bottle);
     this.addObjectToMap(this.level.coins);
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
+
+    if (this.gameOver) {
+      this.addToMap(this.endscreen);
+    }
 
     //hiermit wird die funktion so oft aufgerufen in der sekunde, wie die grafikkarte es zulässt
     let self = this; //das ist ein vorgehen in der objektorientierung, weil er this in der klammer nicht mehr kennt

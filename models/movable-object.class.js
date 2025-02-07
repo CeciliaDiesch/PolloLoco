@@ -161,8 +161,9 @@ class MovableObject extends DrawableObject {
       setTimeout(() => {
         if (this.energy == 0) {
           this.gameOver_sound.play();
-          this.world.gameOver = true;
+          this.world.lost = true;
         }
+        this.world.gameOver = true;
       }, 2000);
       return true;
     }
