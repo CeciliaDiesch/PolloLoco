@@ -14,6 +14,9 @@ class World {
   keyboard;
   camera_x = 0;
 
+  endscreen = new EndScreen();
+  gameOver = false;
+
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
     this.canvas = canvas;
@@ -125,6 +128,9 @@ class World {
     this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
     this.addToMap(this.statusbar);
+    if (this.gameOver) {
+      this.addToMap(this.endscreen);
+    }
 
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
     this.addToMap(this.endboss);

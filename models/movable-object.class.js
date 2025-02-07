@@ -20,6 +20,7 @@ class MovableObject extends DrawableObject {
 
   constructor() {
     super();
+    this.gameOver_sound.volume = 0.5;
   }
 
   applyGravity() {
@@ -146,19 +147,23 @@ class MovableObject extends DrawableObject {
         if (deadFrame >= this.Images_Dead.length) {
           clearInterval(deadAnimation);
         }
-      }, 500);
+      }, 300);
+
       setTimeout(() => {
         this.stopGame();
-      }, 2000);
-      setTimeout(() => {
         if (this.bottleHitEndboss == 0) {
           this.jippie_sound.play();
         }
         if (this.energy == 0) {
           this.ohNo_sound.play();
-          this.gameOver_sound.play();
         }
-      }, 3000);
+      }, 1000);
+      setTimeout(() => {
+        if (this.energy == 0) {
+          this.gameOver_sound.play();
+          this.world.gameOver = true;
+        }
+      }, 2000);
       return true;
     }
     return false;
