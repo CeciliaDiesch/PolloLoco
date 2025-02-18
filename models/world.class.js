@@ -163,7 +163,7 @@ class World {
     } else {
       mo.draw(this.ctx); //ist in movable-object.class gespeichert
     }
-    mo.drawFrame(this.ctx); //ist in movable-object.class gespeichert
+    /*mo.drawFrame(this.ctx);*/ //ist in movable-object.class gespeichert
   }
 
   flipImage(mo) {

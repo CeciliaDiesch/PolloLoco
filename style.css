@@ -1,3 +1,8 @@
+@font-face {
+  font-family: 'tradeWinds';
+  src: url('fonts/tradeWinds-Regular.ttf') format('truetype');
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -7,8 +12,244 @@ body {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  margin: 0;
+  background-image: url('../assets/img/5_background/background12.png');
+  background-size: cover;
+  background-position: center;
+  font-family: 'tradeWinds', Arial, Helvetica, sans-serif;
+  color: white;
+}
+
+h1 {
+  font-size: 72px;
+  letter-spacing: 3px;
+  text-shadow: 2px 2px 2px rgba(0, 0, 0, 0.5);
+  z-index: 20;
 }
 
 canvas {
   background-color: black;
+  background-image: url('../assets/img/9_intro_outro_screens/start/startscreen_2.png');
+  background-size: cover;
+  background-position: center;
+  display: block;
+  border: 5px solid white;
+  border-radius: 6px;
+  z-index: 10;
+
+}
+
+.help-overlay {
+  width: 100%;
+  height: 100%;
+  /*aspect-ratio: auto 695 / 480;*/
+  z-index: 20;
+  display: block;
+  border: 5px solid white;
+  border-radius: 6px;
+  overflow: hidden;
+
+}
+
+.help-overlay img {
+  max-width: 100%;
+  /*height: 100%;*/
+  object-fit: cover;
+}
+
+.overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.8);
+  display: none;
+  z-index: 10;
+}
+
+.gameContainer {
+  width: 720px;
+  height: 480px;
+  position: relative;
+  z-index: 30;
+  padding: 0;
+}
+
+.mainButtons {
+  display: flex;
+  flex-direction: row;
+}
+
+.gameButton {
+  font-family: 'tradeWinds', Arial, Helvetica, sans-serif;
+  position: relative;
+  color: white;
+  z-index: 20;
+  font-size: 24px;
+  background-color: rgb(35, 74, 90);
+  margin: 16px;
+  padding: 8px;
+  cursor: pointer;
+  border: 2px solid white;
+  border-radius: 6px;
+}
+
+.disabled-button {
+  opacity: 0.5;
+  pointer-events: none;
+}
+
+.buttonContainer {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+}
+
+.buttonContainerMobilePlay {
+  display: none;
+}
+
+
+
+
+
+/* Smartphone*/
+@media only screen and (max-width: 745px) {
+  canvas {
+    width: 100%;
+  }
+
+  .help-overlay {
+    /*max-width: 120%;*/
+    height: 120%;
+  }
+
+  .help-overlay img {
+    height: 100%;
+    max-width: 100%;
+  }
+
+  .gameContainer {
+    position: relative;
+    width: 100%;
+    height: auto;
+    background-color: rgb(42, 70, 88);
+  }
+
+  h1 {
+    font-size: 32px;
+  }
+
+  .gameButton {
+    width: 24px;
+    border: 1px solid white;
+    font-size: 10px;
+    font-weight: 100;
+    margin: 4px;
+    padding: 2px;
+
+  }
+
+  .MobileTransparent {
+    color: transparent;
+  }
+
+  .gameButton::after {
+
+    transform: translate(-50%, -50%);
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    color: white;
+    pointer-events: none;
+    /* Pseudo-Elemente sollen die Klicks nicht blockieren */
+  }
+
+  .startButton::after {
+    content: "►";
+  }
+
+  .startButton.pause::after {
+    content: "❚❚";
+    /* Pause-Symbol */
+  }
+
+  .restartButton::after {
+    content: "↺";
+    /* Restart-Symbol */
+  }
+
+  .explanationButton::after {
+    content: "?";
+    color: white;
+    /* Help-Symbol */
+  }
+
+  /* Falls der Explanation-Button in den "Back"-Zustand wechselt */
+  .explanationButton.back::after {
+    content: "←";
+    /* Back-Symbol */
+  }
+
+  .buttonContainer {
+    width: 100%;
+    position: absolute;
+    bottom: 3px;
+    z-index: 40;
+  }
+
+  .buttonContainerMobilePlay {
+    display: flex;
+    color: white;
+    gap: 16px;
+    margin-left: 48px;
+  }
+
+  .actionButton {
+    width: 54px;
+    height: 24px;
+  }
+
+}
+
+@media only screen and (max-width: 480px) {
+  .buttonContainerMobilePlay {
+    gap: 8px;
+    margin-left: 24px;
+  }
+
+  .actionButton {
+    width: 48px;
+  }
+}
+
+@media only screen and (max-width: 380px) {
+  .buttonContainerMobilePlay {
+    gap: 4px;
+    margin-left: 12px;
+  }
+
+  .actionButton {
+    width: 36px;
+  }
+}
+
+@media only screen and (max-height: 480px) {
+  canvas {
+    height: 100vH;
+  }
+
+  .help-overlay {
+    height: 100vH;
+  }
+}
+
+/* Smartphone Querformat*/
+@media screen and (max-width: 720px) and (orientation: landscape) {
+  h1 {
+    display: none;
+  }
 }

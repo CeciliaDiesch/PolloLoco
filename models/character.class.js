@@ -92,12 +92,15 @@ class Character extends MovableObject {
     this.applyGravity();
     this.previousX = this.x;
     this.previousY = this.y;
+    this.walking_sound.preload = 'auto';
+    this.walking_sound.loop = true;
   }
 
   animate() {
     let moving = setInterval(() => {
+      if (gameStatusPause) return;
       //Bewegung nach rechts in einem extra Intervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
-      this.walking_sound.pause();
+      /*this.walking_sound.pause();*/
       let moved = false;
       if (
         this.world.keyboard.RIGHT &&
@@ -106,14 +109,14 @@ class Character extends MovableObject {
       ) {
         this.moveRight();
         this.otherDirection = false;
-        this.walking_sound.play();
+
         moved = true;
       }
 
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-        this.walking_sound.play();
+
         moved = true;
       }
 
@@ -126,6 +129,24 @@ class Character extends MovableObject {
       if (moved) {
         // Wenn sich etwas bewegt, aktualisiere den Zeitstempel
         this.lastMovementTime = Date.now();
+        if (!this.isWalkingPlaying) {
+          this.walking_sound
+            .play()
+            .then(() => {
+              // Spielt jetzt
+              this.isWalkingPlaying = true;
+            })
+            .catch((error) => {
+              console.log('Fehler beim Abspielen des Walking-Sounds:', error);
+            });
+        }
+      } else {
+        // Nur pausieren, wenn er aktuell läuft
+        if (this.isWalkingPlaying) {
+          this.walking_sound.pause();
+          /* this.walking_sound.currentTime = 0;*/
+          this.isWalkingPlaying = false;
+        }
       }
 
       this.world.camera_x = -this.x + 100;
@@ -133,6 +154,7 @@ class Character extends MovableObject {
     intervalIds.push(moving);
 
     let Animation = setInterval(() => {
+      if (gameStatusPause) return;
       if (this.checkDeadAnimation()) {
       } else if (this.checkHurtAnimation()) {
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
@@ -142,6 +164,7 @@ class Character extends MovableObject {
     intervalIds.push(Animation);
 
     let waitAnimation = setInterval(() => {
+      if (gameStatusPause) return;
       if (Date.now() - this.lastMovementTime >= 5000) {
         this.playAnimation(this.Images_Wait);
       }

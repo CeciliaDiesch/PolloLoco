@@ -62,6 +62,7 @@ class Endboss extends MovableObject {
 
   animate() {
     this.EndbossAnimationInterval = setInterval(() => {
+      if (gameStatusPause) return;
       if (this.checkDeadAnimation()) {
       } else if (this.x == this.previousX && this.world && this.world.camera_x <= -1900) {
         this.playAnimation(this.Images_Angry);
@@ -75,6 +76,7 @@ class Endboss extends MovableObject {
     intervalIds.push(this.EndbossAnimationInterval);
 
     this.checkBossStart = setInterval(() => {
+      if (gameStatusPause) return;
       if (this.world && this.world.camera_x <= -1900 && !this.hasStartedBossMovement) {
         if (this.paused) return;
         this.hasStartedBossMovement = true;

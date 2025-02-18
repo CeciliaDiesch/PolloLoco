@@ -27,11 +27,13 @@ class Chicken extends MovableObject {
 
   animate() {
     this.ChickenMovementInterval = setInterval(() => {
+      if (gameStatusPause) return;
       this.moveLeft();
     }, 1000 / 60); //60 mal pro sekunde wird 0.1px von der x koordinate abgezogen
     intervalIds.push(this.ChickenMovementInterval);
 
     this.ChickenAnimationInterval = setInterval(() => {
+      if (gameStatusPause) return;
       this.playAnimation(this.Images_Walking);
     }, 300);
     intervalIds.push(this.ChickenAnimationInterval);
