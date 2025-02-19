@@ -35,17 +35,17 @@
       </div>
       <canvas id="canvas" width="720" height="480"> </canvas>
       <div id="button-container" class="buttonContainer">
-        <div class="buttonContainerMobilePlay">
-          <button class="gameButton actionButton" onclick="arrowLeftPressed()">&#60;</button>
-          <button class="gameButton actionButton" onclick="arrowRightPressed()">&#62;</button>
-          <button class="gameButton actionButton" onclick="spacePressed()">
+        <div id="buttonContainerMobilePlay" class="buttonContainerMobilePlay">
+          <button id="button-left" class="gameButton actionButton">&#60;</button>
+          <button id="button-right" class="gameButton actionButton">&#62;</button>
+          <button id="button-space" class="gameButton actionButton">
             <p>Jump</p>
           </button>
-          <button class="gameButton actionButton" onclick="xPressed()">
+          <button id="button-x" class="gameButton actionButton">
             <p>X</p>
           </button>
         </div>
-        <div class="mainButtons">
+        <div id="main-Buttons" class="mainButtons mainButtonsStart">
           <button
             id="start-button"
             class="gameButton startButton MobileTransparent"

@@ -25,6 +25,8 @@ function playPauseGame() {
     init();
     gameStarted = true;
     gameStatusPause = false;
+    document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
+    document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
   } else {
     if (!gameStatusPause) {
       document.getElementById('start-button').innerText = 'Play';
@@ -41,6 +43,7 @@ function playPauseGame() {
 function restartGame() {
   if (helpWindowActive) return;
   document.getElementById('overlay').style.display = 'none';
+
   location.reload();
 }
 
@@ -122,4 +125,81 @@ window.addEventListener('keyup', (event) => {
     keyboard.xWasPressed = false;
   }
   /*console.log(event);*/
+});
+
+let rightInterval;
+function clickArrowRight() {
+  rightInterval = setInterval(() => {
+    keyboard.RIGHT = true;
+  }, 100);
+}
+
+function stopArrowRight() {
+  clearInterval(rightInterval);
+  keyboard.RIGHT = false;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnRight = document.getElementById('button-right');
+  btnRight.addEventListener('pointerdown', clickArrowRight);
+  btnRight.addEventListener('pointerup', stopArrowRight);
+  btnRight.addEventListener('pointerleave', stopArrowRight);
+});
+
+let leftInterval;
+function clickArrowLeft() {
+  leftInterval = setInterval(() => {
+    keyboard.LEFT = true;
+  }, 100);
+}
+
+function stopArrowLeft() {
+  clearInterval(leftInterval);
+  keyboard.LEFT = false;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnLeft = document.getElementById('button-left');
+  btnLeft.addEventListener('pointerdown', clickArrowLeft);
+  btnLeft.addEventListener('pointerup', stopArrowLeft);
+  btnLeft.addEventListener('pointerleave', stopArrowLeft);
+});
+
+let spaceInterval;
+function clickSpace() {
+  spaceInterval = setInterval(() => {
+    keyboard.SPACE = true;
+  }, 100);
+}
+
+function stopSpace() {
+  clearInterval(spaceInterval);
+  keyboard.SPACE = false;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnSpace = document.getElementById('button-space');
+  btnSpace.addEventListener('pointerdown', clickSpace);
+  btnSpace.addEventListener('pointerup', stopSpace);
+  btnSpace.addEventListener('pointerleave', stopSpace);
+});
+
+let throwInterval;
+function clickX() {
+  throwInterval = setInterval(() => {
+    keyboard.X = true;
+  }, 100);
+}
+
+function stopX() {
+  clearInterval(throwInterval);
+  keyboard.X = false;
+  keyboard.xWasPressed = false;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+  const btnThrow = document.getElementById('button-x');
+  btnThrow.addEventListener('pointerdown', clickX);
+  btnThrow.addEventListener('pointerup', stopX);
+  btnThrow.addEventListener('pointerleave', stopX);
 });

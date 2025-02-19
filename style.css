@@ -30,7 +30,7 @@ h1 {
 }
 
 canvas {
-  background-color: black;
+  background-color: rgb(42, 70, 88);
   background-image: url('../assets/img/9_intro_outro_screens/start/startscreen_2.png');
   background-size: cover;
   background-position: center;
@@ -97,6 +97,10 @@ canvas {
   border-radius: 6px;
 }
 
+.gameButton:hover {
+  border: 2px solid rgb(120, 193, 218);
+}
+
 .disabled-button {
   opacity: 0.5;
   pointer-events: none;
@@ -111,6 +115,8 @@ canvas {
 .buttonContainerMobilePlay {
   display: none;
 }
+
+
 
 
 
@@ -137,6 +143,7 @@ canvas {
     width: 100%;
     height: auto;
     background-color: rgb(42, 70, 88);
+    border-radius: 6px;
   }
 
   h1 {
@@ -202,7 +209,6 @@ canvas {
   }
 
   .buttonContainerMobilePlay {
-    display: flex;
     color: white;
     gap: 16px;
     margin-left: 48px;
@@ -211,6 +217,17 @@ canvas {
   .actionButton {
     width: 54px;
     height: 24px;
+  }
+
+  .mobileSee {
+    display: flex;
+
+
+  }
+
+  .mainButtonsStart {
+    margin-left: 35%;
+    zoom: 2;
   }
 
 }
@@ -223,6 +240,12 @@ canvas {
 
   .actionButton {
     width: 48px;
+  }
+
+
+  .mainButtonsStart {
+    margin-left: 28%;
+    zoom: 1.5;
   }
 }
 
