@@ -5,6 +5,8 @@ let keyboard = new Keyboard(); //hiermit erstellen wir eine Instanz von der clas
 let intervalIds = [];
 i = 1;
 
+start_sound = new Audio('./audio/startLetsGo3.mp3');
+
 /*function setStoppableInterval(fn, time) {
   let id = setInterval(fn, time);
   intervalIds.push(id);
@@ -27,6 +29,7 @@ function playPauseGame() {
     gameStatusPause = false;
     document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
     document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
+    start_sound.play();
   } else {
     if (!gameStatusPause) {
       document.getElementById('start-button').innerText = 'Play';
@@ -202,4 +205,59 @@ document.addEventListener('DOMContentLoaded', () => {
   btnThrow.addEventListener('pointerdown', clickX);
   btnThrow.addEventListener('pointerup', stopX);
   btnThrow.addEventListener('pointerleave', stopX);
+});
+
+document.addEventListener('DOMContentLoaded', () => {
+  let fullscreenOpenButton = document.getElementById('fullscreenOpenButton');
+  let fullscreenCloseButton = document.getElementById('fullscreenCloseButton');
+  let gameContainer = document.getElementById('game-container');
+  let canvas = document.getElementById('canvas');
+  // Jetzt kannst du deine openFullscreen und closeFullscreen Funktionen definieren:
+  function openFullscreen() {
+    fullscreenOpenButton.classList.add('hideButton');
+    fullscreenCloseButton.classList.remove('hideButton');
+
+    if (gameContainer.requestFullscreen) {
+      /*canvas.requestFullscreen();*/
+      gameContainer.requestFullscreen();
+    } else if (gameContainer.webkitRequestFullscreen) {
+      /*canvas.webkitRequestFullscreen();*/
+      gameContainer.webkitRequestFullscreen();
+    } else if (gameContainer.msRequestFullscreen) {
+      /* canvas.msRequestFullscreen();*/
+      gameContainer.msRequestFullscreen();
+    }
+  }
+
+  function closeFullscreen() {
+    fullscreenOpenButton.classList.remove('hideButton');
+    fullscreenCloseButton.classList.add('hideButton');
+    /*mainButtons.classList.remove('buttonContainerFullscreen');
+    gameContainer.classList.remove('gameContainerFullscreen');
+    canvas.classList.remove('canvasFullscreen');*/
+    if (
+      document.fullscreenElement ||
+      document.webkitFullscreenElement ||
+      document.msFullscreenElement
+    ) {
+      if (document.exitFullscreen) {
+        document.exitFullscreen();
+      } else if (document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+      } else if (document.msExitFullscreen) {
+        document.msExitFullscreen();
+      }
+    }
+  }
+
+  // Optionale Zuweisung zu globalen Variablen, falls du sie auch außerhalb des Listeners brauchst:
+  window.openFullscreen = openFullscreen;
+  window.closeFullscreen = closeFullscreen;
+});
+
+document.addEventListener('fullscreenchange', () => {
+  if (!document.fullscreenElement) {
+    // Wenn kein Element mehr im Vollbildmodus ist, wurde ESC gedrückt oder der Vollbildmodus anderweitig beendet.
+    closeFullscreen();
+  }
 });

@@ -45,28 +45,36 @@
             <p>X</p>
           </button>
         </div>
-        <div id="main-Buttons" class="mainButtons mainButtonsStart">
-          <button
-            id="start-button"
-            class="gameButton startButton MobileTransparent"
-            onclick="playPauseGame()"
-          >
-            Start
-          </button>
-          <button
-            id="restart-button"
-            class="gameButton restartButton MobileTransparent"
-            onclick="restartGame()"
-          >
-            Restart
-          </button>
-          <button
-            id="explanation-button"
-            class="gameButton explanationButton MobileTransparent"
-            onclick="showExplanation()"
-          >
-            Help
-          </button>
+        <div class="mainButtonsAndFullscreenButton">
+          <div>
+            <div id="main-Buttons" class="mainButtons mainButtonsStart">
+              <button
+                id="start-button"
+                class="gameButton startButton MobileTransparent"
+                onclick="playPauseGame()"
+              >
+                Start
+              </button>
+              <button
+                id="restart-button"
+                class="gameButton restartButton MobileTransparent"
+                onclick="restartGame()"
+              >
+                Restart
+              </button>
+              <button
+                id="explanation-button"
+                class="gameButton explanationButton MobileTransparent"
+                onclick="showExplanation()"
+              >
+                Help
+              </button>
+            </div>
+            <div>
+              <button id="fullscreenOpenButton" class="buttonFullscreen" onclick="openFullscreen()">&#x26F6</button>
+              <button id="fullscreenCloseButton" class="hideButton buttonFullscreen" onclick="closeFullscreen()">X</button>
+            </div>
+          </div>
         </div>
       </div>
     </div>

@@ -83,6 +83,14 @@ canvas {
   flex-direction: row;
 }
 
+.mainButtonsAndFullscreenButton {
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  justify-content: space-between;
+}
+
+
 .gameButton {
   font-family: 'tradeWinds', Arial, Helvetica, sans-serif;
   position: relative;
@@ -116,9 +124,35 @@ canvas {
   display: none;
 }
 
+.hideButton {
+  display: none;
+}
 
+.gameContainer:fullscreen .mainButtons {
+  width: 100%;
+  position: absolute;
+  bottom: 20px;
+  right: 10px;
+  z-index: 50;
+  justify-content: flex-end;
+}
 
+.gameContainer:fullscreen {
+  position: relative;
+  width: 100%;
+  height: auto;
+  background-color: rgb(42, 70, 88);
+  z-index: 30;
+  /*border-radius: 6px;*/
+}
 
+.gameContainer:fullscreen canvas {
+  width: 100%;
+  height: 100%;
+  position: relative;
+  z-index: 10;
+  /* Restliche Styles wie gehabt */
+}
 
 
 
@@ -228,6 +262,10 @@ canvas {
   .mainButtonsStart {
     margin-left: 35%;
     zoom: 2;
+  }
+
+  .buttonFullscreen {
+    display: none;
   }
 
 }

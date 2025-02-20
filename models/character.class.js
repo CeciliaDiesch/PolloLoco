@@ -144,7 +144,7 @@ class Character extends MovableObject {
         // Nur pausieren, wenn er aktuell läuft
         if (this.isWalkingPlaying) {
           this.walking_sound.pause();
-          /* this.walking_sound.currentTime = 0;*/
+          this.walking_sound.currentTime = 0;
           this.isWalkingPlaying = false;
         }
       }
