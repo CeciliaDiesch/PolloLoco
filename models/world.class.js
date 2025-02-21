@@ -121,14 +121,19 @@ class World {
   }
 
   draw() {
+    let movementDelta = this.camera_x - (this.previousCamera_x || 0);
+    this.previousCamera_x = this.camera_x;
     this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //cleared das ganze canvas um nur neue position von inhalten anzuzeigen
 
+    this.ctx.save();
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
-    this.addObjectToMap(this.level.background);
-    this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
+    this.addObjectToMap(this.level.background, movementDelta);
+    this.ctx.restore();
+    //this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
     this.addToMap(this.statusbar);
 
+    this.ctx.save();
     this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
     this.addToMap(this.endboss);
     this.addToMap(this.character);
@@ -137,7 +142,8 @@ class World {
     this.addObjectToMap(this.level.clouds);
     this.addObjectToMap(this.level.bottle);
     this.addObjectToMap(this.level.coins);
-    this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
+    this.ctx.restore();
+    //this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
 
     if (this.gameOver) {
       this.addToMap(this.endscreen);
@@ -150,12 +156,14 @@ class World {
     });
   }
 
-  addObjectToMap(obj) {
+  addObjectToMap(obj, movementDelta = 0) {
     obj.forEach((object) => {
+      if (object instanceof Background1) {
+        object.x -= movementDelta * object.speedFactor;
+      }
       this.addToMap(object);
     });
   }
-
   addToMap(mo) {
     //dies ist unsere draw methode
     if (mo.otherDirection) {

@@ -6,6 +6,9 @@ let intervalIds = [];
 i = 1;
 
 start_sound = new Audio('./audio/startLetsGo3.mp3');
+background_sound = new Audio('./audio/backgroundMusic2.mp3');
+background_sound.volume = 0.1; // 50% Lautstärke
+background_sound.loop = true; // Endlosschleife
 
 /*function setStoppableInterval(fn, time) {
   let id = setInterval(fn, time);
@@ -30,6 +33,7 @@ function playPauseGame() {
     document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
     document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
     start_sound.play();
+    background_sound.play();
   } else {
     if (!gameStatusPause) {
       document.getElementById('start-button').innerText = 'Play';

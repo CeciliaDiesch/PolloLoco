@@ -11,7 +11,6 @@ class Character extends MovableObject {
   world;
   lastMovementTime = Date.now();
   otherDirection = false;
-  moved = false;
 
   hitChicken_sound = new Audio('audio/hitChicken.mp3');
   hitEndboss_sound = new Audio('audio/hitEndboss.mp3');
@@ -94,25 +93,19 @@ class Character extends MovableObject {
     this.previousX = this.x;
     this.previousY = this.y;
     this.walking_sound.preload = 'auto';
-    /*this.walking_sound.loop = true;*/
-    this.soundloaded = false;
-    this.walking_sound.addEventListener('canplaythrough', () => {
-      this.soundLoaded = true;
-      console.log('Walking sound loaded');
-    });
   }
 
   animate() {
+    this.moveCharacter();
+    this.animateMovingCharacter();
+    this.animateWaitingCharacter();
+    this.animateJumpingCharacter();
+  }
+
+  moveCharacter() {
     let moving = setInterval(() => {
       if (gameStatusPause) return;
       //Bewegung nach rechts in einem extra Intervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
-      /*this.walking_sound.pause();*/
-      if (!this.soundLoaded) {
-        // Wenn der Sound noch nicht geladen ist, mache nichts oder führe einen alternativen Code aus
-        return;
-      }
-
-      this.moved = false;
 
       if (
         this.world.keyboard.RIGHT &&
@@ -136,38 +129,14 @@ class Character extends MovableObject {
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
     intervalIds.push(moving);
+  }
 
-    /*let movingSound = setInterval(() => {
-      if (this.moved) {
-        // Wenn sich etwas bewegt, aktualisiere den Zeitstempel
-        this.lastMovementTime = Date.now();
-        if (!this.isWalkingPlaying) {
-          this.walking_sound
-            .play()
-            .then(() => {
-              // Spielt jetzt
-              this.isWalkingPlaying = true;
-              console.log('sollte Abspielen Walking-Sounds:');
-            })
-            .catch((error) => {
-              console.log('Fehler beim Abspielen des Walking-Sounds:', error);
-            });
-        }
-      } else {
-        // Nur pausieren, wenn er aktuell läuft
-        if (this.isWalkingPlaying) {
-          this.walking_sound.pause();
-          this.walking_sound.currentTime = 0;
-          this.isWalkingPlaying = false;
-        }
-      }
-    }, 10);*/
-
+  animateMovingCharacter() {
     let Animation = setInterval(() => {
-      if (!this.soundLoaded) {
+      /*if (!this.soundLoaded) {
         // Wenn der Sound noch nicht geladen ist, mache nichts oder führe einen alternativen Code aus
         return;
-      }
+      }*/
       this.walking_sound.pause();
       if (gameStatusPause) return;
       if (this.checkDeadAnimation()) {
@@ -178,7 +147,9 @@ class Character extends MovableObject {
       }
     }, 50);
     intervalIds.push(Animation);
+  }
 
+  animateWaitingCharacter() {
     let waitAnimation = setInterval(() => {
       if (gameStatusPause) return;
       if (Date.now() - this.lastMovementTime >= 5000) {
@@ -189,7 +160,9 @@ class Character extends MovableObject {
       }
     }, 500);
     intervalIds.push(waitAnimation);
+  }
 
+  animateJumpingCharacter() {
     let jumpAnimation = setInterval(() => {
       this.checkJumpAnimation();
     }, 80);

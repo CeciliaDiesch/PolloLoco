@@ -181,6 +181,7 @@ class MovableObject extends DrawableObject {
         character.isWalkingPlaying = false;
       }
     }
+    background_sound.pause();
   }
 
   playAnimation(images) {
