@@ -54,6 +54,7 @@ class ThrowableObject extends MovableObject {
         this.splashPlayed = false;
       }
     }, 65);
+    intervalIds.push(throwing);
   }
 
   throw() {
@@ -91,6 +92,7 @@ class ThrowableObject extends MovableObject {
         clearInterval(splashAnimation);
       }
     }, 100);
+    intervalIds.push(splashAnimation);
   }
 
   checkBottleGroundLevel() {
@@ -100,5 +102,6 @@ class ThrowableObject extends MovableObject {
         this.accelartion = 2.5;
       }
     }, 1);
+    intervalIds.push(this.checkGroundInterval);
   }
 }

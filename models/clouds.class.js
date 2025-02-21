@@ -8,9 +8,11 @@ class Clouds extends MovableObject {
   }
 
   animate() {
-    setInterval(() => {
+    this.cloudAnimationInterval = setInterval(() => {
       if (gameStatusPause) return;
       this.moveLeft();
     }, 1000 / 60);
+
+    intervalIds.push(this.cloudAnimationInterval);
   }
 }

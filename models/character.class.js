@@ -11,10 +11,11 @@ class Character extends MovableObject {
   world;
   lastMovementTime = Date.now();
   otherDirection = false;
+  moved = false;
 
   hitChicken_sound = new Audio('audio/hitChicken.mp3');
   hitEndboss_sound = new Audio('audio/hitEndboss.mp3');
-  walking_sound = new Audio('audio/walking4.mp3');
+  walking_sound = new Audio('audio/walking42.mp3');
 
   Images_Walking = [
     '../assets/img/2_character_pepe/2_walk/W-21.png',
@@ -93,7 +94,12 @@ class Character extends MovableObject {
     this.previousX = this.x;
     this.previousY = this.y;
     this.walking_sound.preload = 'auto';
-    this.walking_sound.loop = true;
+    /*this.walking_sound.loop = true;*/
+    this.soundloaded = false;
+    this.walking_sound.addEventListener('canplaythrough', () => {
+      this.soundLoaded = true;
+      console.log('Walking sound loaded');
+    });
   }
 
   animate() {
@@ -101,7 +107,13 @@ class Character extends MovableObject {
       if (gameStatusPause) return;
       //Bewegung nach rechts in einem extra Intervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
       /*this.walking_sound.pause();*/
-      let moved = false;
+      if (!this.soundLoaded) {
+        // Wenn der Sound noch nicht geladen ist, mache nichts oder führe einen alternativen Code aus
+        return;
+      }
+
+      this.moved = false;
+
       if (
         this.world.keyboard.RIGHT &&
         this.x < this.world.level.level_end_x &&
@@ -109,24 +121,24 @@ class Character extends MovableObject {
       ) {
         this.moveRight();
         this.otherDirection = false;
-
-        moved = true;
       }
 
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
-
-        moved = true;
       }
 
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         //wenn pepe wieder am ground ist, hat er ein speedY von -22.5, also ab da, kann er wieder springen
         this.jump();
-        moved = true;
       }
 
-      if (moved) {
+      this.world.camera_x = -this.x + 100;
+    }, 1000 / 60);
+    intervalIds.push(moving);
+
+    /*let movingSound = setInterval(() => {
+      if (this.moved) {
         // Wenn sich etwas bewegt, aktualisiere den Zeitstempel
         this.lastMovementTime = Date.now();
         if (!this.isWalkingPlaying) {
@@ -135,6 +147,7 @@ class Character extends MovableObject {
             .then(() => {
               // Spielt jetzt
               this.isWalkingPlaying = true;
+              console.log('sollte Abspielen Walking-Sounds:');
             })
             .catch((error) => {
               console.log('Fehler beim Abspielen des Walking-Sounds:', error);
@@ -148,17 +161,20 @@ class Character extends MovableObject {
           this.isWalkingPlaying = false;
         }
       }
-
-      this.world.camera_x = -this.x + 100;
-    }, 1000 / 60);
-    intervalIds.push(moving);
+    }, 10);*/
 
     let Animation = setInterval(() => {
+      if (!this.soundLoaded) {
+        // Wenn der Sound noch nicht geladen ist, mache nichts oder führe einen alternativen Code aus
+        return;
+      }
+      this.walking_sound.pause();
       if (gameStatusPause) return;
       if (this.checkDeadAnimation()) {
       } else if (this.checkHurtAnimation()) {
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.Images_Walking);
+        this.walking_sound.play();
       }
     }, 50);
     intervalIds.push(Animation);

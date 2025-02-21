@@ -172,6 +172,15 @@ class MovableObject extends DrawableObject {
 
   stopGame() {
     intervalIds.forEach(clearInterval);
+    if (this.world && this.world.character) {
+      let character = this.world.character;
+
+      if (character.walking_sound) {
+        character.walking_sound.pause();
+        character.walking_sound.currentTime = 0;
+        character.isWalkingPlaying = false;
+      }
+    }
   }
 
   playAnimation(images) {
@@ -198,7 +207,7 @@ class MovableObject extends DrawableObject {
     let step = 1; // Schrittgröße
     let minY = 30; // Minimaler y-Wert
     let maxY = 50; // Maximaler y-Wert
-    setInterval(() => {
+    let UpAndDownInterval = setInterval(() => {
       this.y += direction * step;
       if (this.y <= minY) {
         this.y = minY;
@@ -208,6 +217,7 @@ class MovableObject extends DrawableObject {
         direction = -1; // Richtung ändern zu nach oben
       }
     }, 1000 / 60); // 60 Mal pro Sekunde für flüssige Bewegung
+    intervalIds.push(UpAndDownInterval);
   }
 
   throw() {
@@ -217,6 +227,7 @@ class MovableObject extends DrawableObject {
     }
     this.speedY = 30;
     this.gravityInterval = this.applyGravity(); //Starte die Gravitation und speichere die Interval-ID
+    intervalIds.push(this.gravityInterval);
     if (this.otherDirection === true) {
       this.x -= 50;
     }
@@ -228,6 +239,8 @@ class MovableObject extends DrawableObject {
         this.x += 10;
       }
     }, 25);
+    intervalIds.push(this.moveXInterval);
+
     this.checkBottleGroundLevel();
     this.checkReleaseX();
   }
@@ -239,6 +252,7 @@ class MovableObject extends DrawableObject {
         this.accelartion = 10;
       }
     }, 200);
+    intervalIds.push(this.sinkInterval);
   }
 
   stopFlying() {

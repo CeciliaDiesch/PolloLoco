@@ -135,6 +135,7 @@ function clickArrowRight() {
   rightInterval = setInterval(() => {
     keyboard.RIGHT = true;
   }, 100);
+  intervalIds.push(rightInterval);
 }
 
 function stopArrowRight() {
@@ -154,6 +155,7 @@ function clickArrowLeft() {
   leftInterval = setInterval(() => {
     keyboard.LEFT = true;
   }, 100);
+  intervalIds.push(leftInterval);
 }
 
 function stopArrowLeft() {
@@ -173,6 +175,7 @@ function clickSpace() {
   spaceInterval = setInterval(() => {
     keyboard.SPACE = true;
   }, 100);
+  intervalIds.push(spaceInterval);
 }
 
 function stopSpace() {
@@ -192,6 +195,7 @@ function clickX() {
   throwInterval = setInterval(() => {
     keyboard.X = true;
   }, 100);
+  intervalIds.push(throwInterval);
 }
 
 function stopX() {
