@@ -1,20 +1,13 @@
 let canvas;
-let ctx; //abkürzung context
+let ctx;
 let world;
-let keyboard = new Keyboard(); //hiermit erstellen wir eine Instanz von der class
+let keyboard = new Keyboard();
 let intervalIds = [];
 i = 1;
-
 start_sound = new Audio('./audio/startLetsGo3.mp3');
 background_sound = new Audio('./audio/backgroundMusic2.mp3');
-background_sound.volume = 0.1; // 50% Lautstärke
-background_sound.loop = true; // Endlosschleife
-
-/*function setStoppableInterval(fn, time) {
-  let id = setInterval(fn, time);
-  intervalIds.push(id);
-}*/
-
+background_sound.volume = 0.1;
+background_sound.loop = true;
 let gameStarted = false;
 let gameStatusPause = false;
 let helpWindowActive = false;
@@ -24,34 +17,74 @@ function playPauseGame() {
   document.getElementById('overlay').style.display = 'block';
   const startButton = document.querySelector('.startButton');
   if (!gameStarted) {
-    document.getElementById('start-button').innerText = 'Pause';
-    startButton.classList.add('pause');
-    initLevel1();
-    init();
-    gameStarted = true;
-    gameStatusPause = false;
-    document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
-    document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
-    start_sound.play();
-    background_sound.play();
+    startGame(startButton);
   } else {
     if (!gameStatusPause) {
-      document.getElementById('start-button').innerText = 'Play';
-      startButton.classList.remove('pause');
-      gameStatusPause = true;
+      PauseGame(startButton);
     } else {
-      document.getElementById('start-button').innerText = 'Pause';
-      startButton.classList.add('pause');
-      gameStatusPause = false;
+      playGame(startButton);
     }
   }
 }
 
+function startGame(startButton) {
+  startButton.innerText = 'Pause';
+  startButton.classList.add('pause');
+  initLevel1();
+  init();
+  gameStarted = true;
+  gameStatusPause = false;
+  document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
+  document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
+  start_sound.play();
+  background_sound.play();
+}
+
+function PauseGame(startButton) {
+  startButton.innerText = 'Play';
+  startButton.classList.remove('pause');
+  gameStatusPause = true;
+  background_sound.pause();
+}
+
+function playGame(startButton) {
+  startButton.innerText = 'Pause';
+  startButton.classList.add('pause');
+  gameStatusPause = false;
+  background_sound.play();
+}
+
 function restartGame() {
   if (helpWindowActive) return;
+  const startButton = document.querySelector('.startButton');
   document.getElementById('overlay').style.display = 'none';
+  world.character.stopGame();
+  resetSettings(startButton);
+  resetCanvas();
+}
 
-  location.reload();
+function resetCanvas() {
+  const buttonContainer = document.getElementById('button-container');
+  const oldCanvas = document.getElementById('canvas');
+  const parent = oldCanvas.parentNode;
+  parent.removeChild(oldCanvas);
+  const newCanvas = document.createElement('canvas');
+  newCanvas.id = 'canvas';
+  newCanvas.width = 720;
+  newCanvas.height = 480;
+  newCanvas.className = oldCanvas.className;
+  parent.insertBefore(newCanvas, buttonContainer);
+}
+
+function resetSettings(startButton) {
+  gameStarted = false;
+  gameStatusPause = false;
+  helpWindowActive = false;
+
+  startButton.innerText = 'Start';
+  startButton.classList.remove('pause');
+  document.getElementById('buttonContainerMobilePlay').classList.remove('mobileSee');
+  document.getElementById('main-Buttons').classList.add('mainButtonsStart');
 }
 
 function showExplanation() {
@@ -59,28 +92,40 @@ function showExplanation() {
   const startButton = document.getElementById('start-button');
   const restartButton = document.getElementById('restart-button');
   const explanationButton = document.querySelector('.explanationButton');
+  const canvas = document.getElementById('canvas');
   if (!helpWindowActive) {
-    gameStatusPause = true;
-    helpWindowActive = true;
-    document.getElementById('explanation-button').innerText = 'Back';
-    document.getElementById('canvas').style.display = 'none';
-    helpOverlay.style.display = 'block';
-    startButton.classList.add('disabled-button');
-    restartButton.classList.add('disabled-button');
-    explanationButton.classList.add('back');
+    openHelp(helpOverlay, startButton, restartButton, explanationButton, canvas);
   } else {
-    helpWindowActive = false;
-    document.getElementById('explanation-button').innerText = 'Help';
-
-    helpOverlay.style.display = 'none';
-    document.getElementById('canvas').style.display = 'block';
-    startButton.classList.remove('disabled-button');
-    restartButton.classList.remove('disabled-button');
-    explanationButton.classList.remove('back');
+    closeHelp(helpOverlay, startButton, restartButton, explanationButton, canvas);
     if (gameStarted) {
-      document.getElementById('start-button').innerText = 'Pause';
+      startButton.innerText = 'Pause';
       gameStatusPause = false;
     }
+  }
+}
+
+function openHelp(helpOverlay, startButton, restartButton, explanationButton, canvas) {
+  gameStatusPause = true;
+  helpWindowActive = true;
+  canvas.style.display = 'none';
+  helpOverlay.style.display = 'block';
+  startButton.classList.add('disabled-button');
+  restartButton.classList.add('disabled-button');
+  explanationButton.classList.add('back');
+  explanationButton.innerText = 'Back';
+  background_sound.pause();
+}
+
+function closeHelp(helpOverlay, startButton, restartButton, explanationButton, canvas) {
+  helpWindowActive = false;
+  helpOverlay.style.display = 'none';
+  canvas.style.display = 'block';
+  startButton.classList.remove('disabled-button');
+  restartButton.classList.remove('disabled-button');
+  explanationButton.classList.remove('back');
+  explanationButton.innerText = 'Help';
+  if (gameStarted) {
+    background_sound.play();
   }
 }
 
@@ -243,11 +288,7 @@ document.addEventListener('DOMContentLoaded', () => {
     /*mainButtons.classList.remove('buttonContainerFullscreen');
     gameContainer.classList.remove('gameContainerFullscreen');
     canvas.classList.remove('canvasFullscreen');*/
-    if (
-      document.fullscreenElement ||
-      document.webkitFullscreenElement ||
-      document.msFullscreenElement
-    ) {
+    if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
       if (document.exitFullscreen) {
         document.exitFullscreen();
       } else if (document.webkitExitFullscreen) {

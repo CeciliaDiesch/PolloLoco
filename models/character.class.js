@@ -63,11 +63,7 @@ class Character extends MovableObject {
     '../assets/img/2_character_pepe/3_jump/J-39.png',
   ];
 
-  Images_Hurt = [
-    '../assets/img/2_character_pepe/4_hurt/H-43.png',
-    '../assets/img/2_character_pepe/4_hurt/H-41.png',
-    '../assets/img/2_character_pepe/4_hurt/H-42.png',
-  ];
+  Images_Hurt = ['../assets/img/2_character_pepe/4_hurt/H-43.png', '../assets/img/2_character_pepe/4_hurt/H-41.png', '../assets/img/2_character_pepe/4_hurt/H-42.png'];
 
   Images_Dead = [
     '../assets/img/2_character_pepe/5_dead/D-51.png',
@@ -105,27 +101,17 @@ class Character extends MovableObject {
   moveCharacter() {
     let moving = setInterval(() => {
       if (gameStatusPause) return;
-      //Bewegung nach rechts in einem extra Intervall, damit man es öfter pro sek abspielen kann, damit es smoother aussieht
-
-      if (
-        this.world.keyboard.RIGHT &&
-        this.x < this.world.level.level_end_x &&
-        this.x < this.world.endboss.x - 10
-      ) {
+      if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x && this.x < this.world.endboss.x - 10) {
         this.moveRight();
         this.otherDirection = false;
       }
-
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
       }
-
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
-        //wenn pepe wieder am ground ist, hat er ein speedY von -22.5, also ab da, kann er wieder springen
         this.jump();
       }
-
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
     intervalIds.push(moving);
@@ -133,10 +119,6 @@ class Character extends MovableObject {
 
   animateMovingCharacter() {
     let Animation = setInterval(() => {
-      /*if (!this.soundLoaded) {
-        // Wenn der Sound noch nicht geladen ist, mache nichts oder führe einen alternativen Code aus
-        return;
-      }*/
       this.walking_sound.pause();
       if (gameStatusPause) return;
       if (this.checkDeadAnimation()) {
