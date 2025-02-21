@@ -12,7 +12,7 @@ class Endboss extends MovableObject {
   endbossWalk = false;
   hasStartedBossMovement = false;
 
-  ouch_sound = new Audio('audio/ouch1.mp3');
+  ouch_sound = createSound('audio/ouch1.mp3');
   paused = false;
 
   Images_Walking = [
@@ -33,17 +33,9 @@ class Endboss extends MovableObject {
     '../assets/img/4_enemie_boss_chicken/2_alert/G12.png',
   ];
 
-  Images_Hurt = [
-    '../assets/img/4_enemie_boss_chicken/4_hurt/G21.png',
-    '../assets/img/4_enemie_boss_chicken/4_hurt/G22.png',
-    '../assets/img/4_enemie_boss_chicken/4_hurt/G23.png',
-  ];
+  Images_Hurt = ['../assets/img/4_enemie_boss_chicken/4_hurt/G21.png', '../assets/img/4_enemie_boss_chicken/4_hurt/G22.png', '../assets/img/4_enemie_boss_chicken/4_hurt/G23.png'];
 
-  Images_Dead = [
-    '../assets/img/4_enemie_boss_chicken/5_dead/G24.png',
-    '../assets/img/4_enemie_boss_chicken/5_dead/G25.png',
-    '../assets/img/4_enemie_boss_chicken/5_dead/G26.png',
-  ];
+  Images_Dead = ['../assets/img/4_enemie_boss_chicken/5_dead/G24.png', '../assets/img/4_enemie_boss_chicken/5_dead/G25.png', '../assets/img/4_enemie_boss_chicken/5_dead/G26.png'];
 
   constructor() {
     super();

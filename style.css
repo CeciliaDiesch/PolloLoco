@@ -34,7 +34,7 @@ canvas {
   background-image: url('../assets/img/9_intro_outro_screens/start/startscreen_2.png');
   background-size: cover;
   background-position: center;
-  display: flex;
+  display: block;
   border: 5px solid white;
   border-radius: 6px;
   z-index: 10;
@@ -64,6 +64,25 @@ canvas {
   background: rgba(0, 0, 0, 0.8);
   display: none;
   z-index: 10;
+}
+
+.overlayMobileTurn {
+  padding-top: 100px;
+  padding-left: 10%;
+  padding-right: 20%;
+  position: absolute;
+  top: -100px;
+  left: 0;
+  width: 120%;
+  height: 200%;
+  background: rgba(0, 0, 0, 0.8);
+  color: #fff;
+  display: none;
+  align-items: flex-start;
+  justify-content: flex-start;
+  text-align: center;
+  font-size: 1.5em;
+  z-index: 1000;
 }
 
 .gameContainer {
@@ -102,6 +121,7 @@ canvas {
 }
 
 .gameButton:hover {
+  transform: scale(1.1);
   border: 2px solid rgb(120, 193, 218);
 }
 
@@ -149,26 +169,57 @@ canvas {
   z-index: 10;
 }
 
-.buttonFullscreen {
-  font-size: 30px;
-  color: white;
-  border: none;
-  cursor: pointer;
-  background-color: transparent;
+.buttonFullscreenContainer {
   position: absolute;
   margin: 0;
   top: 10px;
   right: 5px;
   z-index: 50;
+  display: flex;
   justify-content: flex-end;
+  align-items: center;
+  gap: 12px;
+  margin-top: 6px;
+  overflow: hidden;
 }
 
-.buttonFullscreen:hover {
-  zoom: 1.1;
+.buttonFullscreen {
+  font-size: 42px;
+  color: white;
+  border: none;
+  cursor: pointer;
+  background-color: transparent;
+}
+
+img:hover {
+  transform: scale(1.1);
+}
+
+.transitionHover:hover {
+  transform: scale(1.1);
+}
+
+.buttonFullscreenImg {
+  background-color: transparent;
+  background: transparent;
+  height: 24px;
+  width: 24px;
 }
 
 
 @media only screen and (max-width: 745px) {
+
+
+  .neverHide {
+    position: static;
+    margin: 0;
+    top: 10px;
+    right: 5px;
+    z-index: 50;
+    display: flex !important;
+    justify-content: flex-end;
+  }
+
   canvas {
     width: 100%;
   }
@@ -216,6 +267,10 @@ canvas {
     pointer-events: none;
   }
 
+  img:hover {
+    transform: none;
+  }
+
   .startButton::after {
     content: "►";
   }
@@ -236,6 +291,13 @@ canvas {
   .explanationButton.back::after {
     content: "←";
   }
+
+
+  .impressumButton::after {
+    content: "ℹ";
+    color: white;
+  }
+
 
   .buttonContainer {
     width: 100%;
@@ -260,8 +322,9 @@ canvas {
   }
 
   .mainButtonsStart {
-    margin-left: 35%;
-    zoom: 2;
+    margin-left: 45%;
+    transform: scale(2);
+    margin-bottom: 14px;
   }
 
   .buttonFullscreen {
@@ -280,8 +343,9 @@ canvas {
   }
 
   .mainButtonsStart {
-    margin-left: 28%;
-    zoom: 1.5;
+    margin-left: 40%;
+    transform: scale(1.5);
+    margin-bottom: 8px;
   }
 }
 
@@ -309,5 +373,13 @@ canvas {
 @media screen and (max-width: 720px) and (orientation: landscape) {
   h1 {
     display: none;
+  }
+}
+
+@media screen and (max-width: 720px) and (orientation: portrait) and (max-height: 600px) {
+  .overlayMobileTurn {
+    display: flex;
+    max-width: 100%;
+    max-height: 100vh;
   }
 }

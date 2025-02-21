@@ -8,12 +8,12 @@ class MovableObject extends DrawableObject {
   lastHit = 0;
   bottleHitEndboss = 100;
   world;
-  coin_sound = new Audio('audio/coin.mp3');
-  bottle_sound = new Audio('audio/collect.mp3');
-  bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
-  gameOver_sound = new Audio('audio/gameOver.mp3');
-  jippie_sound = new Audio('audio/jippie.mp3');
-  ohNo_sound = new Audio('audio/ohNo.mp3');
+  coin_sound = createSound('audio/coin.mp3');
+  bottle_sound = createSound('audio/collect.mp3');
+  bottle_sound_splash = createSound('audio/bottleSplash.mp3');
+  gameOver_sound = createSound('audio/gameOver.mp3');
+  jippie_sound = createSound('audio/jippie.mp3');
+  ohNo_sound = createSound('audio/ohNo.mp3');
   splashPlayed = false;
   bottleHitCounted = false;
   hasStartedDeadAnimation = false;

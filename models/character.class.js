@@ -12,9 +12,9 @@ class Character extends MovableObject {
   lastMovementTime = Date.now();
   otherDirection = false;
 
-  hitChicken_sound = new Audio('audio/hitChicken.mp3');
-  hitEndboss_sound = new Audio('audio/hitEndboss.mp3');
-  walking_sound = new Audio('audio/walking42.mp3');
+  hitChicken_sound = createSound('audio/hitChicken.mp3');
+  hitEndboss_sound = createSound('audio/hitEndboss.mp3');
+  walking_sound = createSound('audio/walking42.mp3');
 
   Images_Walking = [
     '../assets/img/2_character_pepe/2_walk/W-21.png',

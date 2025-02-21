@@ -4,13 +4,35 @@ let world;
 let keyboard = new Keyboard();
 let intervalIds = [];
 i = 1;
-start_sound = new Audio('./audio/startLetsGo3.mp3');
-background_sound = new Audio('./audio/backgroundMusic2.mp3');
+let allAudios = [];
+function createSound(src) {
+  const sound = new Audio(src);
+  allAudios.push(sound);
+  return sound;
+}
+start_sound = createSound('./audio/startLetsGo3.mp3');
+background_sound = createSound('./audio/backgroundMusic2.mp3');
 background_sound.volume = 0.1;
 background_sound.loop = true;
 let gameStarted = false;
 let gameStatusPause = false;
 let helpWindowActive = false;
+let isMuted = false;
+
+function toggleMuteAllSounds() {
+  isMuted = !isMuted;
+  allAudios.forEach((audio) => (audio.muted = isMuted));
+  const muteButtonImg = document.querySelector('#muteButton img');
+  if (isMuted) {
+    muteButtonImg.src = './assets/img/5_background/noSound2.png';
+  } else {
+    muteButtonImg.src = './assets/img/5_background/sound2.png';
+  }
+}
+
+function showImprint() {
+  window.open('imprint.html', '_blank');
+}
 
 function playPauseGame() {
   if (helpWindowActive) return;
@@ -80,7 +102,6 @@ function resetSettings(startButton) {
   gameStarted = false;
   gameStatusPause = false;
   helpWindowActive = false;
-
   startButton.innerText = 'Start';
   startButton.classList.remove('pause');
   document.getElementById('buttonContainerMobilePlay').classList.remove('mobileSee');
@@ -110,6 +131,7 @@ function openHelp(helpOverlay, startButton, restartButton, explanationButton, ca
   canvas.style.display = 'none';
   helpOverlay.style.display = 'block';
   startButton.classList.add('disabled-button');
+  startButton.classList.add('pause');
   restartButton.classList.add('disabled-button');
   explanationButton.classList.add('back');
   explanationButton.innerText = 'Back';
@@ -269,6 +291,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function openFullscreen() {
     fullscreenOpenButton.classList.add('hideButton');
     fullscreenCloseButton.classList.remove('hideButton');
+    document.querySelector('.buttonFullscreenImg').style.width = '48px';
+    document.querySelector('.buttonFullscreenImg').style.height = '48px';
 
     if (gameContainer.requestFullscreen) {
       /*canvas.requestFullscreen();*/
@@ -285,6 +309,8 @@ document.addEventListener('DOMContentLoaded', () => {
   function closeFullscreen() {
     fullscreenOpenButton.classList.remove('hideButton');
     fullscreenCloseButton.classList.add('hideButton');
+    document.querySelector('.buttonFullscreenImg').style.width = '24px';
+    document.querySelector('.buttonFullscreenImg').style.height = '24px';
     /*mainButtons.classList.remove('buttonContainerFullscreen');
     gameContainer.classList.remove('gameContainerFullscreen');
     canvas.classList.remove('canvasFullscreen');*/

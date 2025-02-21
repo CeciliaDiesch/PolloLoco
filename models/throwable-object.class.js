@@ -2,9 +2,9 @@ class ThrowableObject extends MovableObject {
   height = 70;
   width = 50;
   world;
-  bottle_sound_flying = new Audio('audio/bottleFly.mp3');
-  bottle_sound_flying_straight = new Audio('audio/bottleFlyStraight.mp3');
-  bottle_sound_splash = new Audio('audio/bottleSplash.mp3');
+  bottle_sound_flying = createSound('audio/bottleFly.mp3');
+  bottle_sound_flying_straight = createSound('audio/bottleFlyStraight.mp3');
+  bottle_sound_splash = createSound('audio/bottleSplash.mp3');
   moveXInterval;
   checkGroundInterval;
 
@@ -42,12 +42,7 @@ class ThrowableObject extends MovableObject {
   animate() {
     let throwing = setInterval(() => {
       this.bottle_sound_flying.pause();
-      if (
-        this.world.keyboard &&
-        this.world.keyboard.X &&
-        this.isAboveGround() &&
-        !this.splashPlayed
-      ) {
+      if (this.world.keyboard && this.world.keyboard.X && this.isAboveGround() && !this.splashPlayed) {
         console.log('x wurde gedrückt');
         this.playAnimation(this.Images_Throwing);
         this.bottle_sound_flying.play();
