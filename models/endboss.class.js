@@ -11,7 +11,6 @@ class Endboss extends MovableObject {
   world;
   endbossWalk = false;
   hasStartedBossMovement = false;
-
   ouch_sound = createSound('audio/ouch1.mp3');
   paused = false;
 
@@ -41,18 +40,31 @@ class Endboss extends MovableObject {
     super();
     this.loadImage(this.Images_Angry[0]);
     this.x = 2350;
-
     this.loadImages(this.Images_Angry);
     this.loadImages(this.Images_Walking);
     this.loadImages(this.Images_Hurt);
     this.loadImages(this.Images_Dead);
     this.speed = 0.1;
     this.previousX = this.x;
-
     this.animate();
   }
 
   animate() {
+    this.animateMotionEndboss();
+    this.checkBossStart = setInterval(() => {
+      if (gameStatusPause) return;
+      if (this.world && this.world.camera_x <= -1900 && !this.hasStartedBossMovement) {
+        if (this.paused) return;
+        this.hasStartedBossMovement = true;
+        setTimeout(() => {
+          this.moveEndboss();
+        }, 3000);
+      }
+    }, 100);
+    intervalIds.push(this.checkBossStart);
+  }
+
+  animateMotionEndboss() {
     this.EndbossAnimationInterval = setInterval(() => {
       if (gameStatusPause) return;
       if (this.checkDeadAnimation()) {
@@ -66,23 +78,15 @@ class Endboss extends MovableObject {
       }
     }, 300);
     intervalIds.push(this.EndbossAnimationInterval);
+  }
 
-    this.checkBossStart = setInterval(() => {
+  moveEndboss() {
+    this.EndbossMovementInterval = setInterval(() => {
       if (gameStatusPause) return;
-      if (this.world && this.world.camera_x <= -1900 && !this.hasStartedBossMovement) {
-        if (this.paused) return;
-        this.hasStartedBossMovement = true;
-        setTimeout(() => {
-          this.EndbossMovementInterval = setInterval(() => {
-            if (gameStatusPause) return;
-            if (!this.paused) {
-              this.moveLeft();
-            }
-          }, 1000 / 500);
-          intervalIds.push(this.EndbossMovementInterval);
-        }, 3000);
+      if (!this.paused) {
+        this.moveLeft();
       }
-    }, 100);
-    intervalIds.push(this.checkBossStart);
+    }, 1000 / 500);
+    intervalIds.push(this.EndbossMovementInterval);
   }
 }

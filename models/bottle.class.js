@@ -13,7 +13,7 @@ class Bottle extends MovableObject {
   };
   constructor() {
     super();
-    this.loadImage('../assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png'); //es braucht kein super wenn man nicht von einer anderen klasse erbt mit extend ..
+    this.loadImage('../assets/img/6_salsa_bottle/1_salsa_bottle_on_ground.png');
     this.x = Math.min(200 + Math.random() * 2200, this.maximalX);
   }
 }

@@ -5,11 +5,6 @@ let keyboard = new Keyboard();
 let intervalIds = [];
 i = 1;
 let allAudios = [];
-function createSound(src) {
-  const sound = new Audio(src);
-  allAudios.push(sound);
-  return sound;
-}
 start_sound = createSound('./audio/startLetsGo3.mp3');
 background_sound = createSound('./audio/backgroundMusic2.mp3');
 background_sound.volume = 0.1;
@@ -18,6 +13,21 @@ let gameStarted = false;
 let gameStatusPause = false;
 let helpWindowActive = false;
 let isMuted = false;
+let rightInterval;
+let leftInterval;
+let spaceInterval;
+let throwInterval;
+
+function init() {
+  canvas = document.getElementById('canvas');
+  world = new World(canvas, keyboard);
+}
+
+function createSound(src) {
+  const sound = new Audio(src);
+  allAudios.push(sound);
+  return sound;
+}
 
 function toggleMuteAllSounds() {
   isMuted = !isMuted;
@@ -58,8 +68,8 @@ function startGame(startButton) {
   gameStatusPause = false;
   document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
   document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
-  start_sound.play();
-  background_sound.play();
+  restartSound(start_sound);
+  restartSound(background_sound);
 }
 
 function PauseGame(startButton) {
@@ -73,7 +83,7 @@ function playGame(startButton) {
   startButton.innerText = 'Pause';
   startButton.classList.add('pause');
   gameStatusPause = false;
-  background_sound.play();
+  restartSound(background_sound);
 }
 
 function restartGame() {
@@ -147,13 +157,8 @@ function closeHelp(helpOverlay, startButton, restartButton, explanationButton, c
   explanationButton.classList.remove('back');
   explanationButton.innerText = 'Help';
   if (gameStarted) {
-    background_sound.play();
+    restartSound(background_sound);
   }
-}
-
-function init() {
-  canvas = document.getElementById('canvas');
-  world = new World(canvas, keyboard); // wir übergeben die variable canvas und keyboard an unsere Welt
 }
 
 window.addEventListener('keydown', (event) => {
@@ -175,7 +180,6 @@ window.addEventListener('keydown', (event) => {
   if (event.code == 'KeyX') {
     keyboard.X = true;
   }
-  console.log(event);
 });
 
 window.addEventListener('keyup', (event) => {
@@ -198,10 +202,8 @@ window.addEventListener('keyup', (event) => {
     keyboard.X = false;
     keyboard.xWasPressed = false;
   }
-  /*console.log(event);*/
 });
 
-let rightInterval;
 function clickArrowRight() {
   rightInterval = setInterval(() => {
     keyboard.RIGHT = true;
@@ -221,7 +223,6 @@ document.addEventListener('DOMContentLoaded', () => {
   btnRight.addEventListener('pointerleave', stopArrowRight);
 });
 
-let leftInterval;
 function clickArrowLeft() {
   leftInterval = setInterval(() => {
     keyboard.LEFT = true;
@@ -241,7 +242,6 @@ document.addEventListener('DOMContentLoaded', () => {
   btnLeft.addEventListener('pointerleave', stopArrowLeft);
 });
 
-let spaceInterval;
 function clickSpace() {
   spaceInterval = setInterval(() => {
     keyboard.SPACE = true;
@@ -261,7 +261,6 @@ document.addEventListener('DOMContentLoaded', () => {
   btnSpace.addEventListener('pointerleave', stopSpace);
 });
 
-let throwInterval;
 function clickX() {
   throwInterval = setInterval(() => {
     keyboard.X = true;
@@ -282,57 +281,67 @@ document.addEventListener('DOMContentLoaded', () => {
   btnThrow.addEventListener('pointerleave', stopX);
 });
 
+function restartSound(audio) {
+  if (audio) {
+    if (gameStatusPause) return;
+    if (!audio.paused) {
+      audio.pause();
+      audio.currentTime = 0;
+    }
+    if (audio.readyState < 3) {
+      return;
+    } else {
+      audio.play().catch((error) => console.error(error));
+    }
+  }
+}
+
 document.addEventListener('DOMContentLoaded', () => {
-  let fullscreenOpenButton = document.getElementById('fullscreenOpenButton');
-  let fullscreenCloseButton = document.getElementById('fullscreenCloseButton');
-  let gameContainer = document.getElementById('game-container');
-  let canvas = document.getElementById('canvas');
-  // Jetzt kannst du deine openFullscreen und closeFullscreen Funktionen definieren:
-  function openFullscreen() {
-    fullscreenOpenButton.classList.add('hideButton');
-    fullscreenCloseButton.classList.remove('hideButton');
-    document.querySelector('.buttonFullscreenImg').style.width = '48px';
-    document.querySelector('.buttonFullscreenImg').style.height = '48px';
+  const fullscreenOpenButton = document.getElementById('fullscreenOpenButton');
+  const fullscreenCloseButton = document.getElementById('fullscreenCloseButton');
+  const gameContainer = document.getElementById('game-container');
 
-    if (gameContainer.requestFullscreen) {
-      /*canvas.requestFullscreen();*/
-      gameContainer.requestFullscreen();
-    } else if (gameContainer.webkitRequestFullscreen) {
-      /*canvas.webkitRequestFullscreen();*/
-      gameContainer.webkitRequestFullscreen();
-    } else if (gameContainer.msRequestFullscreen) {
-      /* canvas.msRequestFullscreen();*/
-      gameContainer.msRequestFullscreen();
-    }
-  }
+  fullscreenOpenButton.addEventListener('click', () => {
+    openFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer);
+  });
 
-  function closeFullscreen() {
-    fullscreenOpenButton.classList.remove('hideButton');
-    fullscreenCloseButton.classList.add('hideButton');
-    document.querySelector('.buttonFullscreenImg').style.width = '24px';
-    document.querySelector('.buttonFullscreenImg').style.height = '24px';
-    /*mainButtons.classList.remove('buttonContainerFullscreen');
-    gameContainer.classList.remove('gameContainerFullscreen');
-    canvas.classList.remove('canvasFullscreen');*/
-    if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-      if (document.exitFullscreen) {
-        document.exitFullscreen();
-      } else if (document.webkitExitFullscreen) {
-        document.webkitExitFullscreen();
-      } else if (document.msExitFullscreen) {
-        document.msExitFullscreen();
-      }
-    }
-  }
-
-  // Optionale Zuweisung zu globalen Variablen, falls du sie auch außerhalb des Listeners brauchst:
-  window.openFullscreen = openFullscreen;
-  window.closeFullscreen = closeFullscreen;
+  fullscreenCloseButton.addEventListener('click', () => {
+    closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer);
+  });
 });
+
+function openFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer) {
+  fullscreenOpenButton.classList.add('hideButton');
+  fullscreenCloseButton.classList.remove('hideButton');
+  document.querySelector('.buttonFullscreenImg').style.width = '48px';
+  document.querySelector('.buttonFullscreenImg').style.height = '48px';
+  if (gameContainer.requestFullscreen) {
+    gameContainer.requestFullscreen();
+  } else if (gameContainer.webkitRequestFullscreen) {
+    gameContainer.webkitRequestFullscreen();
+  } else if (gameContainer.msRequestFullscreen) {
+    gameContainer.msRequestFullscreen();
+  }
+}
+
+function closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer) {
+  fullscreenOpenButton.classList.remove('hideButton');
+  fullscreenCloseButton.classList.add('hideButton');
+  document.querySelector('.buttonFullscreenImg').style.width = '24px';
+  document.querySelector('.buttonFullscreenImg').style.height = '24px';
+  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
+    if (document.exitFullscreen) {
+      document.exitFullscreen();
+    } else if (document.webkitExitFullscreen) {
+      document.webkitExitFullscreen();
+    } else if (document.msExitFullscreen) {
+      document.msExitFullscreen();
+    }
+  }
+}
 
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
-    // Wenn kein Element mehr im Vollbildmodus ist, wurde ESC gedrückt oder der Vollbildmodus anderweitig beendet.
     closeFullscreen();
   }
 });

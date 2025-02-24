@@ -5,5 +5,5 @@ class Keyboard {
   DOWN = false;
   SPACE = false;
   X = false;
-  xWasPressed = false; // Flag, das angibt, ob X bereits verarbeitet wurde
+  xWasPressed = false;
 }

@@ -34,7 +34,7 @@ class ThrowableObject extends MovableObject {
     this.loadImage('../assets/img/6_salsa_bottle/salsa_bottle.png');
     this.loadImages(this.Images_Throwing);
     this.loadImages(this.Images_Splash);
-    this.bottle_sound_flying.loop = true; //Loopt den Sound
+    this.bottle_sound_flying.loop = true;
     this.bottle_sound_flying_straight.playbackRate = 0.5;
     this.animate();
   }
@@ -43,9 +43,8 @@ class ThrowableObject extends MovableObject {
     let throwing = setInterval(() => {
       this.bottle_sound_flying.pause();
       if (this.world.keyboard && this.world.keyboard.X && this.isAboveGround() && !this.splashPlayed) {
-        console.log('x wurde gedrückt');
         this.playAnimation(this.Images_Throwing);
-        this.bottle_sound_flying.play();
+        restartSound(this.bottle_sound_flying);
         this.splashPlayed = false;
       }
     }, 65);
@@ -54,31 +53,26 @@ class ThrowableObject extends MovableObject {
 
   throw() {
     this.bottle_sound_flying.currentTime = 0;
-    this.bottle_sound_flying_straight.play();
+    restartSound(this.bottle_sound_flying_straight);
     super.throw();
   }
 
   stopFlying() {
     this.bottle_sound_flying.pause();
     this.bottle_sound_flying_straight.pause();
-    this.bottle_sound_flying.currentTime = 0; // Setze den Startpunkt zurück
+    this.bottle_sound_flying.currentTime = 0;
     this.bottle_sound_flying_straight.currentTime = 0;
     super.stopFlying();
-
-    // Setzt eine kurze Verzögerung, bevor die Splash-Flasche entfernt wird
     setTimeout(() => {
-      this.world.removeObject(this); // Rufe die allgemeine stopFlying() Methode aus MovableObject auf
-      console.log('Splash-Flasche wurde aus der Welt entfernt.');
-    }, 3000); // Entfernt die Splash-Flasche nach 3 Sekunde
+      this.world.removeObject(this);
+    }, 3000);
   }
 
   splash() {
-    // Stoppt Bewegung und die Gravitation und splasht Flasche
     this.stopFlying();
-    console.log('Flasche schlägt auf und splasht');
     this.splashPlayed = true;
     this.bottleHitCounted = true;
-    this.bottle_sound_splash.play();
+    restartSound(this.bottle_sound_splash);
     let splashFrame = 0;
     let splashAnimation = setInterval(() => {
       this.img = this.imageCache[this.Images_Splash[splashFrame]];

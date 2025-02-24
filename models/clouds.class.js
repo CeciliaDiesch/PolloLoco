@@ -12,7 +12,6 @@ class Clouds extends MovableObject {
       if (gameStatusPause) return;
       this.moveLeft();
     }, 1000 / 60);
-
     intervalIds.push(this.cloudAnimationInterval);
   }
 }

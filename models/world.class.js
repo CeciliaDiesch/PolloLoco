@@ -1,7 +1,7 @@
 class World {
   character = new Character();
   endboss = new Endboss();
-  level = level1; // enemies, clouds, background wird jetzt definiert in level1.js und level.class.js über das level1.
+  level = level1;
   enemies = level1.enemies;
   clouds = level1.clouds;
   background = level1.background;
@@ -16,14 +16,10 @@ class World {
   gameOver = false;
 
   constructor(canvas, keyboard) {
-    this.ctx = canvas.getContext('2d'); //mit dieser variable kann man jetzt viele funktionen aufrufen
+    this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
     this.keyboard = keyboard;
     this.characterAttackCounted = false;
-    /*const canvasWidth = this.canvas.width; // Canvas-Breite holen
-    this.background = new Background1(canvasWidth); // Canvas-Breite an Background1 übergeben
-    */
-
     this.draw();
     this.setWorld();
     this.run();
@@ -32,29 +28,88 @@ class World {
   }
 
   setWorld() {
-    this.character.world = this; //eine instanz auf alle movable objects übergeben, haupstsächlich erstmal auf den character
+    this.character.world = this;
     this.endboss.world = this;
     this.enemies.forEach((enemy) => {
-      enemy.world = this; // Welt-Referenz an alle Feinde übergeben
+      enemy.world = this;
     });
     this.clouds.forEach((cloud) => {
-      cloud.world = this; // Welt-Referenz an alle Clouds übergeben
+      cloud.world = this;
     });
     this.bottle.forEach((bottle) => {
-      bottle.world = this; // Welt-Referenz an alle Bottles übergeben
+      bottle.world = this;
     });
-
     this.statusbar.world = this;
   }
 
   run() {
     let run = setInterval(() => {
-      //check collisions
       this.checkCollisions();
       this.checkThrowObjects();
     }, 1000 / 20);
     intervalIds.push(run);
-    console.log('InetervalArray is', intervalIds);
+  }
+
+  checkCollisions() {
+    this.checkCollisionCharacterEnemy();
+    this.ckeckCollisionCharacterCoins();
+    this.ckeckCollisionCharacterBottles();
+    this.ckeckCollisionBottlesEndboss();
+    this.ckeckCollisionCharacterEndboss();
+  }
+
+  checkCollisionCharacterEnemy() {
+    this.level.enemies.forEach((enemy) => {
+      if (this.character.isColliding(enemy)) {
+        this.character.hit();
+        this.statusbar.setPercentage(this.character.energy);
+      }
+    });
+  }
+
+  ckeckCollisionCharacterCoins() {
+    this.level.coins.forEach((coin) => {
+      if (this.character.isColliding(coin)) {
+        this.character.hitCoin(coin);
+        this.statusbar.setPercentageCoins(this.character.coins);
+      }
+    });
+  }
+
+  ckeckCollisionCharacterBottles() {
+    this.level.bottle.forEach((bottle) => {
+      if (this.character.isColliding(bottle)) {
+        this.character.hitBottle(bottle);
+        this.statusbar.setPercentageBottles(this.character.bottle);
+      }
+    });
+  }
+
+  ckeckCollisionBottlesEndboss() {
+    this.throwableObjects.forEach((bottleThrown) => {
+      if (!bottleThrown.bottleHitCounted && this.endboss.isColliding(bottleThrown)) {
+        this.endboss.hitEndboss(bottleThrown);
+        this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
+      }
+    });
+  }
+
+  ckeckCollisionCharacterEndboss() {
+    if (this.character.isColliding(this.endboss)) {
+      this.character.hit();
+      this.statusbar.setPercentage(this.character.energy);
+    }
+    if (this.character.isColliding(this.endboss) && this.character.isAboveGround()) {
+      if (!this.characterAttackCounted) {
+        this.endboss.hitEndboss();
+        this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
+        this.characterAttackCounted = true;
+        restartSound(this.character.hitEndboss_sound);
+      }
+      setTimeout(() => {
+        this.characterAttackCounted = false;
+      }, 3000);
+    }
   }
 
   checkThrowObjects() {
@@ -64,77 +119,38 @@ class World {
       let bottlesFly = new ThrowableObject(this.character.x + 50, this.character.y + 100, this);
       bottlesFly.otherDirection = this.character.otherDirection;
       this.throwableObjects.push(bottlesFly);
-
-      this.throwableObjects.world = this; // Welt-Referenz an alle throwableObjects übergeben
-      bottlesFly.throw(); // Nur das neue Objekt werfen
+      this.throwableObjects.world = this;
+      bottlesFly.throw();
       this.statusbar.setPercentageBottles(this.character.bottle);
-      console.log('Bottle thrown', this.character.bottle);
-    }
-  }
-
-  checkCollisions() {
-    this.level.enemies.forEach((enemy) => {
-      if (this.character.isColliding(enemy)) {
-        this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
-        this.statusbar.setPercentage(this.character.energy);
-        console.log('collision with Character', this.character.energy);
-      }
-    });
-    this.level.coins.forEach((coin) => {
-      if (this.character.isColliding(coin)) {
-        this.character.hitCoin(coin);
-        this.statusbar.setPercentageCoins(this.character.coins);
-        console.log('collision with Coins', this.character.coins);
-      }
-    });
-    this.level.bottle.forEach((bottle) => {
-      if (this.character.isColliding(bottle)) {
-        this.character.hitBottle(bottle);
-        this.statusbar.setPercentageBottles(this.character.bottle);
-        console.log('collision with Bottle', this.character.bottle);
-      }
-    });
-    this.throwableObjects.forEach((bottleThrown) => {
-      if (!bottleThrown.bottleHitCounted && this.endboss.isColliding(bottleThrown)) {
-        this.endboss.hitEndboss(bottleThrown);
-        this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
-        console.log('collision with BottleThrown', this.endboss.bottleHitEndboss);
-      }
-    });
-    if (this.character.isColliding(this.endboss)) {
-      this.character.hit(); //so rufen wir funktionen auf, mit dem subjekt character, die funktion hit() ist allerdings in movable-object definiert. ich glaube es ist egal wo sie definiert wird. In den klammern wird das obj weitergegeben
-      this.statusbar.setPercentage(this.character.energy);
-      console.log('collision Endboss with Character', this.character.energy);
-    }
-    if (this.character.isColliding(this.endboss) && this.character.isAboveGround()) {
-      if (!this.characterAttackCounted) {
-        this.endboss.hitEndboss();
-        this.statusbar.setPercentageEndboss(this.endboss.bottleHitEndboss);
-        console.log('collision with attacking Character', this.endboss.bottleHitEndboss);
-        this.characterAttackCounted = true;
-        this.character.hitEndboss_sound.play();
-      }
-      setTimeout(() => {
-        this.characterAttackCounted = false;
-      }, 3000);
     }
   }
 
   draw() {
     let movementDelta = this.camera_x - (this.previousCamera_x || 0);
     this.previousCamera_x = this.camera_x;
-    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height); //cleared das ganze canvas um nur neue position von inhalten anzuzeigen
-
+    this.ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
     this.ctx.save();
-    this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
+    this.shiftLeftBackground(movementDelta);
+    this.addToMap(this.statusbar);
+    this.ctx.save();
+    this.shiftleftRest();
+    if (this.gameOver) {
+      this.addToMap(this.endscreen);
+    }
+    let self = this;
+    requestAnimationFrame(function () {
+      self.draw();
+    });
+  }
+
+  shiftLeftBackground(movementDelta) {
+    this.ctx.translate(this.camera_x, 0);
     this.addObjectToMap(this.level.background, movementDelta);
     this.ctx.restore();
-    //this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
+  }
 
-    this.addToMap(this.statusbar);
-
-    this.ctx.save();
-    this.ctx.translate(this.camera_x, 0); //elemente nach links verschieben
+  shiftleftRest() {
+    this.ctx.translate(this.camera_x, 0);
     this.addToMap(this.endboss);
     this.addToMap(this.character);
     this.addObjectToMap(this.throwableObjects);
@@ -143,17 +159,6 @@ class World {
     this.addObjectToMap(this.level.bottle);
     this.addObjectToMap(this.level.coins);
     this.ctx.restore();
-    //this.ctx.translate(-this.camera_x, 0); //trafo matrix resetet
-
-    if (this.gameOver) {
-      this.addToMap(this.endscreen);
-    }
-
-    //hiermit wird die funktion so oft aufgerufen in der sekunde, wie die grafikkarte es zulässt
-    let self = this; //das ist ein vorgehen in der objektorientierung, weil er this in der klammer nicht mehr kennt
-    requestAnimationFrame(function () {
-      self.draw();
-    });
   }
 
   addObjectToMap(obj, movementDelta = 0) {
@@ -161,48 +166,42 @@ class World {
       if (object instanceof Background1) {
         object.x -= movementDelta * object.speedFactor;
       }
+      if (object instanceof Bottle) {
+        object.x -= movementDelta * 0.3;
+      }
       this.addToMap(object);
     });
   }
+
   addToMap(mo) {
-    //dies ist unsere draw methode
     if (mo.otherDirection) {
       this.flipImage(mo);
     } else {
-      mo.draw(this.ctx); //ist in movable-object.class gespeichert
+      mo.draw(this.ctx);
     }
-    /*mo.drawFrame(this.ctx);*/ //ist in movable-object.class gespeichert
   }
 
   flipImage(mo) {
     this.ctx.save();
-    this.ctx.translate(mo.x + mo.width, 0); //dies verändert die transformationsmatrix, wie alle folgenden zeichnungen auf dem canvas dargestellt werden, bis die Transformationen rückgängig gemacht werden mit vorher ctx.save und hinterher ctx.restore
+    this.ctx.translate(mo.x + mo.width, 0);
     this.ctx.scale(-1, 1);
     this.ctx.drawImage(mo.img, 0, mo.y, mo.width, mo.height);
-    this.ctx.restore(); // hier wird die trafo matrix wieder zurückgesetzt, nachdem das eine gespiegelte character bild eingefügt wurde
+    this.ctx.restore();
   }
 
   removeObject(obj) {
     const levelArrays = ['bottle', 'coins'];
-
     for (let arrayName of levelArrays) {
       const index = this.level[arrayName].indexOf(obj);
       if (index > -1) {
         this.level[arrayName].splice(index, 1);
-        console.log(`${arrayName} entfernt:`, obj);
         return;
-      } else {
-        console.log(`${arrayName} nicht gefunden:`, obj);
       }
     }
-
     const throwableIndex = this.throwableObjects.indexOf(obj);
     if (throwableIndex > -1) {
       this.throwableObjects.splice(throwableIndex, 1);
-      console.log(`throwableObjects entfernt:`, obj);
       return;
-    } else {
-      console.log(`throwableObjects nicht gefunden:`, obj);
     }
   }
 }

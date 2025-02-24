@@ -11,6 +11,7 @@ class Character extends MovableObject {
   world;
   lastMovementTime = Date.now();
   otherDirection = false;
+  hasMoved = true;
 
   hitChicken_sound = createSound('audio/hitChicken.mp3');
   hitEndboss_sound = createSound('audio/hitEndboss.mp3');
@@ -93,6 +94,7 @@ class Character extends MovableObject {
 
   animate() {
     this.moveCharacter();
+    this.checkHasMoved();
     this.animateMovingCharacter();
     this.animateWaitingCharacter();
     this.animateJumpingCharacter();
@@ -100,21 +102,34 @@ class Character extends MovableObject {
 
   moveCharacter() {
     let moving = setInterval(() => {
+      this.hasMoved = false;
       if (gameStatusPause) return;
       if (this.world.keyboard.RIGHT && this.x < this.world.level.level_end_x && this.x < this.world.endboss.x - 10) {
         this.moveRight();
         this.otherDirection = false;
+        this.hasMoved = true;
       }
       if (this.world.keyboard.LEFT && this.x > 0) {
         this.moveLeft();
         this.otherDirection = true;
+        this.hasMoved = true;
       }
       if (this.world.keyboard.SPACE && !this.isAboveGround()) {
         this.jump();
+        this.hasMoved = true;
       }
       this.world.camera_x = -this.x + 100;
     }, 1000 / 60);
     intervalIds.push(moving);
+  }
+
+  checkHasMoved() {
+    let checkHasMoved = setInterval(() => {
+      if (this.hasMoved) {
+        this.lastMovementTime = Date.now();
+      }
+    }, 1000 / 60);
+    intervalIds.push(checkHasMoved);
   }
 
   animateMovingCharacter() {
@@ -125,7 +140,7 @@ class Character extends MovableObject {
       } else if (this.checkHurtAnimation()) {
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
         this.playAnimation(this.Images_Walking);
-        this.walking_sound.play();
+        restartSound(this.walking_sound);
       }
     }, 50);
     intervalIds.push(Animation);
