@@ -1,3 +1,23 @@
+/**
+ * Represents the game world with all its elements and starts the game loop.
+ *
+ * @class World
+ * @property {Character} character - The main game character.
+ * @property {Endboss} endboss - The final boss enemy.
+ * @property {Level} level - The current level instance.
+ * @property {Enemy[]} enemies - Array of enemy objects from the level.
+ * @property {Clouds[]} clouds - Array of cloud objects from the level.
+ * @property {Background1[]} background - Array of background layer objects.
+ * @property {Bottle[]} bottle - Array of bottle objects from the level.
+ * @property {Coins[]} coins - Array of coin objects from the level.
+ * @property {Statusbar} statusbar - The status bars displaying game info.
+ * @property {ThrowableObject[]} throwableObjects - Array of objects that can be thrown.
+ * @property {HTMLCanvasElement} canvas - The canvas element used for rendering.
+ * @property {CanvasRenderingContext2D} ctx - The 2D rendering context of the canvas.
+ * @property {Object} keyboard - The global keyboard input object.
+ * @property {number} camera_x - The horizontal camera offset.
+ * @property {boolean} gameOver - Indicates if the game is over.
+ */
 class World {
   character = new Character();
   endboss = new Endboss();
@@ -15,6 +35,9 @@ class World {
   camera_x = 0;
   gameOver = false;
 
+  /**
+   * Constructs a new World instance, initializing the rendering context, keyboard input, and game state.
+   */
   constructor(canvas, keyboard) {
     this.ctx = canvas.getContext('2d');
     this.canvas = canvas;
@@ -27,6 +50,9 @@ class World {
     this.endscreen = new EndScreen(this);
   }
 
+  /**
+   * Assigns the current world instance to all contained game objects.
+   */
   setWorld() {
     this.character.world = this;
     this.endboss.world = this;
@@ -42,6 +68,9 @@ class World {
     this.statusbar.world = this;
   }
 
+  /**
+   * Runs the game loop by repeatedly checking collisions and thrown objects.
+   */
   run() {
     let run = setInterval(() => {
       this.checkCollisions();
@@ -50,6 +79,9 @@ class World {
     intervalIds.push(run);
   }
 
+  /**
+   * Checks all collision events by calling individual collision check methods.
+   */
   checkCollisions() {
     this.checkCollisionCharacterEnemy();
     this.ckeckCollisionCharacterCoins();
@@ -58,6 +90,10 @@ class World {
     this.ckeckCollisionCharacterEndboss();
   }
 
+  /**
+   * Checks collision between the character and each enemy.
+   * If colliding, the character is hit and the statusbar energy is updated.
+   */
   checkCollisionCharacterEnemy() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
@@ -67,6 +103,10 @@ class World {
     });
   }
 
+  /**
+   * Checks collision between the character and coins.
+   * If colliding, the character collects the coin and the statusbar coin percentage is updated.
+   */
   ckeckCollisionCharacterCoins() {
     this.level.coins.forEach((coin) => {
       if (this.character.isColliding(coin)) {
@@ -76,6 +116,10 @@ class World {
     });
   }
 
+  /**
+   * Checks collision between the character and bottles.
+   * If colliding, the character collects the bottle and the statusbar bottle percentage is updated.
+   */
   ckeckCollisionCharacterBottles() {
     this.level.bottle.forEach((bottle) => {
       if (this.character.isColliding(bottle)) {
@@ -85,6 +129,10 @@ class World {
     });
   }
 
+  /**
+   * Checks collision between thrown bottles and the endboss.
+   * If a collision occurs and the bottle hasn't been counted yet as a hit, the endboss is hit and the statusbar is updated.
+   */
   ckeckCollisionBottlesEndboss() {
     this.throwableObjects.forEach((bottleThrown) => {
       if (!bottleThrown.bottleHitCounted && this.endboss.isColliding(bottleThrown)) {
@@ -94,6 +142,11 @@ class World {
     });
   }
 
+  /**
+   * Checks collision between the character and the endboss.
+   * If colliding on the ground, the character is hit and the characters statusbar energy is updated.
+   * Additionally, if the character is above ground and not already counted, the endboss is hit and the endbosses statusbar is updated, and a hit sound is played.
+   */
   ckeckCollisionCharacterEndboss() {
     if (this.character.isColliding(this.endboss)) {
       this.character.hit();
@@ -112,6 +165,10 @@ class World {
     }
   }
 
+  /**
+   * Checks if the throw action is triggered (X key pressed) and, if so, creates and throws a new throwable object.
+   * Deducts bottle count and updates the bottle statusbar accordingly.
+   */
   checkThrowObjects() {
     if (this.keyboard.X && !this.keyboard.xWasPressed && this.character.bottle >= 20) {
       this.keyboard.xWasPressed = true;
@@ -125,6 +182,10 @@ class World {
     }
   }
 
+  /**
+   * Draws the current game frame by clearing the canvas and shifts background and game objects to the left when pov (perspective of view) is moving right,
+   * and recursively schedules the next frame.
+   */
   draw() {
     let movementDelta = this.camera_x - (this.previousCamera_x || 0);
     this.previousCamera_x = this.camera_x;
@@ -143,12 +204,19 @@ class World {
     });
   }
 
+  /**
+   * Shifts the background layer to the left by translating the canvas and drawing background objects.
+   * @param {number} movementDelta - The change in camera position since the last frame.
+   */
   shiftLeftBackground(movementDelta) {
     this.ctx.translate(this.camera_x, 0);
     this.addObjectToMap(this.level.background, movementDelta);
     this.ctx.restore();
   }
 
+  /**
+   * Shifts the remaining game objects (endboss, character, throwable objects, enemies, clouds, bottles, coins) to the left and draws them on the canvas.
+   */
   shiftleftRest() {
     this.ctx.translate(this.camera_x, 0);
     this.addToMap(this.endboss);
@@ -161,6 +229,12 @@ class World {
     this.ctx.restore();
   }
 
+  /**
+   * Moves each object based on their movement adjustment factor and draws it on the canvas.
+   * For Background1 objects and Bottles, applies a movement delta before drawing.
+   * @param {Array} obj - An array of game objects.
+   * @param {number} [movementDelta=0] - The movement adjustment factor for background objects.
+   */
   addObjectToMap(obj, movementDelta = 0) {
     obj.forEach((object) => {
       if (object instanceof Background1) {
@@ -173,6 +247,11 @@ class World {
     });
   }
 
+  /**
+   * Draws a game object on the canvas. If the object is marked to be flipped (otherDirection),
+   * it calls flipImage; otherwise, it calls the object's draw method.
+   * @param {Object} mo - A movable object with a draw method and optional otherDirection flag.
+   */
   addToMap(mo) {
     if (mo.otherDirection) {
       this.flipImage(mo);
@@ -181,6 +260,10 @@ class World {
     }
   }
 
+  /**
+   * Draws a flipped image of the given game object on the canvas.
+   * @param {Object} mo - A movable object with properties: img, x, y, width, and height.
+   */
   flipImage(mo) {
     this.ctx.save();
     this.ctx.translate(mo.x + mo.width, 0);
@@ -189,6 +272,10 @@ class World {
     this.ctx.restore();
   }
 
+  /**
+   * Removes an object from the level's bottle or coins arrays, or from the throwableObjects array.
+   * @param {Object} obj - The object to be removed.
+   */
   removeObject(obj) {
     const levelArrays = ['bottle', 'coins'];
     for (let arrayName of levelArrays) {

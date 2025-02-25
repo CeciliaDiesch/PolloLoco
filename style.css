@@ -172,7 +172,7 @@ canvas {
 .buttonFullscreenContainer {
   position: absolute;
   margin: 0;
-  top: 4px;
+  top: 7px;
   right: 5px;
   z-index: 50;
   display: flex;

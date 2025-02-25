@@ -1,4 +1,8 @@
 let level1;
+
+/**
+ * Initializes level1 by creating a new Level instance with arrays of Chickens, Clouds, Background layers, Bottles, and Coins.
+ */
 function initLevel1() {
   level1 = new Level(
     [new Chicken(), new Chicken(), new Chicken(), new Chicken()],

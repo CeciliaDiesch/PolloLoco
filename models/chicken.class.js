@@ -1,3 +1,19 @@
+/**
+ * Represents a chicken enemy in the game.
+ * Extends MovableObject.
+ *
+ * @class Chicken
+ * @extends MovableObject
+ * @property {number} y - The vertical position.
+ * @property {number} height - The height of the chicken.
+ * @property {number} width - The width of the chicken.
+ * @property {Object} offset - Collision offset values.
+ * @property {number} offset.top - Top offset.
+ * @property {number} offset.bottom - Bottom offset.
+ * @property {number} offset.left - Left offset.
+ * @property {number} offset.right - Right offset.
+ * @property {string[]} Images_Walking - Array of image paths for the walking animation.
+ */
 class Chicken extends MovableObject {
   y = 382;
   img;
@@ -15,6 +31,12 @@ class Chicken extends MovableObject {
     '../assets/img/3_enemies_chicken/chicken_normal/1_walk/3_w.png',
   ];
 
+  /**
+   * Constructs a new Chicken instance by initializing its default image,
+   * loading its walking animations, setting a random horizontal position,
+   * assigning a random speed, and starting its animation.
+   * @constructor
+   */
   constructor() {
     super();
     this.loadImage('../assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png');
@@ -24,6 +46,10 @@ class Chicken extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Animates the chicken by moving it left at 60 FPS and updating its walking animation every 300 ms.
+   * Both intervals are paused when the game is paused.
+   */
   animate() {
     this.ChickenMovementInterval = setInterval(() => {
       if (gameStatusPause) return;

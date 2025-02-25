@@ -1,3 +1,28 @@
+/**
+ * Represents the Endboss character in the game.
+ * Extends MovableObject and defines its size, collision offsets, state flags,
+ * associated sounds, and animations for walking, being angry, hurt, and dead.
+ *
+ * @class Endboss
+ * @extends MovableObject
+ * @property {number} height - The height of the endboss.
+ * @property {number} width - The width of the endboss.
+ * @property {number} y - The vertical position of the endboss.
+ * @property {Object} offset - Collision offsets.
+ * @property {number} offset.top - Top offset.
+ * @property {number} offset.bottom - Bottom offset.
+ * @property {number} offset.left - Left offset.
+ * @property {number} offset.right - Right offset.
+ * @property {Object} world - Reference to the game world.
+ * @property {boolean} endbossWalk - Indicates if the endboss is walking.
+ * @property {boolean} hasStartedBossMovement - Indicates if the endboss movement has started.
+ * @property {HTMLAudioElement} ouch_sound - Sound played when the endboss is hurt.
+ * @property {boolean} paused - Indicates if the endboss is paused.
+ * @property {string[]} Images_Walking - Image paths for the walking animation.
+ * @property {string[]} Images_Angry - Image paths for the angry animation.
+ * @property {string[]} Images_Hurt - Image paths for the hurt animation.
+ * @property {string[]} Images_Dead - Image paths for the death animation.
+ */
 class Endboss extends MovableObject {
   height = 420;
   width = 220;
@@ -36,6 +61,11 @@ class Endboss extends MovableObject {
 
   Images_Dead = ['../assets/img/4_enemie_boss_chicken/5_dead/G24.png', '../assets/img/4_enemie_boss_chicken/5_dead/G25.png', '../assets/img/4_enemie_boss_chicken/5_dead/G26.png'];
 
+  /**
+   * Constructs a new Endboss instance by initializing its position, loading all animation images,
+   * setting its speed, recording its initial position, and starting its animation cycle.
+   * @constructor
+   */
   constructor() {
     super();
     this.loadImage(this.Images_Angry[0]);
@@ -49,6 +79,11 @@ class Endboss extends MovableObject {
     this.animate();
   }
 
+  /**
+   * Initiates the endboss animation cycle by starting motion animations and checking when to trigger the endboss movement.
+   * Sets an interval that, once the camera reaches a threshold and boss movement hasn't started,
+   * the moveEndboss() is triggered after a 3-second delay.
+   */
   animate() {
     this.animateMotionEndboss();
     this.checkBossStart = setInterval(() => {
@@ -64,6 +99,13 @@ class Endboss extends MovableObject {
     intervalIds.push(this.checkBossStart);
   }
 
+  /**
+   * Animates the endboss's motion based on its current state.
+   * - If the endboss is dead, stops further animations.
+   * - If the endboss hasn't moved and the camera threshold is met, plays the angry animation and shows the status bar.
+   * - If paused, plays the hurt animation.
+   * - Otherwise, if moving and not paused, plays the walking animation.
+   */
   animateMotionEndboss() {
     this.EndbossAnimationInterval = setInterval(() => {
       if (gameStatusPause) return;
@@ -80,6 +122,10 @@ class Endboss extends MovableObject {
     intervalIds.push(this.EndbossAnimationInterval);
   }
 
+  /**
+   * Moves the endboss to the left at a high frequency if the game is not paused.
+   * This movement is continuously executed once triggered.
+   */
   moveEndboss() {
     this.EndbossMovementInterval = setInterval(() => {
       if (gameStatusPause) return;

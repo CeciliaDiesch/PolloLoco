@@ -18,17 +18,28 @@ let leftInterval;
 let spaceInterval;
 let throwInterval;
 
+/**
+ * Creates a new world and passes the canvas and global keyboard object to the world constructor.
+ */
 function init() {
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard);
 }
 
+/**
+ * Creates a new audio object with the provided source, adds it to the global allAudios array, and returns the audio object.
+ * @param {string} src - The URL of the audio file.
+ * @returns {HTMLAudioElement} The newly created audio object.
+ */
 function createSound(src) {
   const sound = new Audio(src);
   allAudios.push(sound);
   return sound;
 }
 
+/**
+ * Toggles the global mute state, updates all audio objects, and changes the mute button image accordingly.
+ */
 function toggleMuteAllSounds() {
   isMuted = !isMuted;
   allAudios.forEach((audio) => (audio.muted = isMuted));
@@ -40,10 +51,16 @@ function toggleMuteAllSounds() {
   }
 }
 
+/**
+ * Opens the imprint page in a new browser tab.
+ */
 function showImprint() {
   window.open('imprint.html', '_blank');
 }
 
+/**
+ * Toggles the game state between play and pause by showing the overlay and calling the appropriate function.
+ */
 function playPauseGame() {
   if (helpWindowActive) return;
   document.getElementById('overlay').style.display = 'block';
@@ -59,6 +76,10 @@ function playPauseGame() {
   }
 }
 
+/**
+ * Starts the game by initializing the level, updating the start button, setting game flags, and starting sounds.
+ * @param {HTMLElement} startButton - The button element used to start the game.
+ */
 function startGame(startButton) {
   startButton.innerText = 'Pause';
   startButton.classList.add('pause');
@@ -72,6 +93,10 @@ function startGame(startButton) {
   restartSound(background_sound);
 }
 
+/**
+ * Pauses the game by updating the start button, setting the game status to paused, and pausing the background sound.
+ * @param {HTMLElement} startButton - The button element used to control the game state.
+ */
 function PauseGame(startButton) {
   startButton.innerText = 'Play';
   startButton.classList.remove('pause');
@@ -79,6 +104,10 @@ function PauseGame(startButton) {
   background_sound.pause();
 }
 
+/**
+ * Resumes the game by updating the start button, setting the game status to playing, and restarting the background sound.
+ * @param {HTMLElement} startButton - The button element used to control the game state.
+ */
 function playGame(startButton) {
   startButton.innerText = 'Pause';
   startButton.classList.add('pause');
@@ -86,6 +115,9 @@ function playGame(startButton) {
   restartSound(background_sound);
 }
 
+/**
+ * Restarts the game by hiding the overlay, stopping the character, and resetting settings and canvas.
+ */
 function restartGame() {
   if (helpWindowActive) return;
   const startButton = document.querySelector('.startButton');
@@ -95,6 +127,9 @@ function restartGame() {
   resetCanvas();
 }
 
+/**
+ * Resets the canvas by removing the existing one and creating a new canvas element with default dimensions and styles.
+ */
 function resetCanvas() {
   const buttonContainer = document.getElementById('button-container');
   const oldCanvas = document.getElementById('canvas');
@@ -108,6 +143,10 @@ function resetCanvas() {
   parent.insertBefore(newCanvas, buttonContainer);
 }
 
+/**
+ * Resets game settings by updating global flags and modifying the start button and related user interface elements.
+ * @param {HTMLElement} startButton - The button element used to control the game state.
+ */
 function resetSettings(startButton) {
   gameStarted = false;
   gameStatusPause = false;
@@ -118,6 +157,9 @@ function resetSettings(startButton) {
   document.getElementById('main-Buttons').classList.add('mainButtonsStart');
 }
 
+/**
+ * Toggles the help overlay: opens it if inactive, otherwise closes it and resumes the game.
+ */
 function showExplanation() {
   const helpOverlay = document.getElementById('help-overlay');
   const startButton = document.getElementById('start-button');
@@ -135,6 +177,14 @@ function showExplanation() {
   }
 }
 
+/**
+ * Opens the help overlay by pausing the game, hiding the canvas, disabling buttons, and pausing background sound.
+ * @param {HTMLElement} helpOverlay - The help overlay element.
+ * @param {HTMLElement} startButton - The start button element.
+ * @param {HTMLElement} restartButton - The restart button element.
+ * @param {HTMLElement} explanationButton - The help button element.
+ * @param {HTMLElement} canvas - The canvas element.
+ */
 function openHelp(helpOverlay, startButton, restartButton, explanationButton, canvas) {
   gameStatusPause = true;
   helpWindowActive = true;
@@ -148,6 +198,14 @@ function openHelp(helpOverlay, startButton, restartButton, explanationButton, ca
   background_sound.pause();
 }
 
+/**
+ * Closes the help overlay by showing the canvas, enabling buttons, and restarting background sound if the game is active.
+ * @param {HTMLElement} helpOverlay - The help overlay element.
+ * @param {HTMLElement} startButton - The start button element.
+ * @param {HTMLElement} restartButton - The restart button element.
+ * @param {HTMLElement} explanationButton - The help button element.
+ * @param {HTMLElement} canvas - The canvas element.
+ */
 function closeHelp(helpOverlay, startButton, restartButton, explanationButton, canvas) {
   helpWindowActive = false;
   helpOverlay.style.display = 'none';
@@ -161,6 +219,10 @@ function closeHelp(helpOverlay, startButton, restartButton, explanationButton, c
   }
 }
 
+/**
+ * Updates keyboard flags to true for Space, Arrow keys, and KeyX on keydown events.
+ * @param {KeyboardEvent} event - The keydown event.
+ */
 window.addEventListener('keydown', (event) => {
   if (event.code == 'Space') {
     keyboard.SPACE = true;
@@ -182,6 +244,10 @@ window.addEventListener('keydown', (event) => {
   }
 });
 
+/**
+ * Updates keyboard flags to false for Space, Arrow keys, and KeyX on keyup events and resets the xWasPressed flag for KeyX.
+ * @param {KeyboardEvent} event - The keyup event.
+ */
 window.addEventListener('keyup', (event) => {
   if (event.code == 'Space') {
     keyboard.SPACE = false;
@@ -204,6 +270,9 @@ window.addEventListener('keyup', (event) => {
   }
 });
 
+/**
+ * Starts an interval that repeatedly sets the RIGHT key flag to true.
+ */
 function clickArrowRight() {
   rightInterval = setInterval(() => {
     keyboard.RIGHT = true;
@@ -211,11 +280,17 @@ function clickArrowRight() {
   intervalIds.push(rightInterval);
 }
 
+/**
+ * Stops the interval for the RIGHT key and resets its flag.
+ */
 function stopArrowRight() {
   clearInterval(rightInterval);
   keyboard.RIGHT = false;
 }
 
+/**
+ * Sets up pointer event listeners for the right arrow button once the DOM is loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const btnRight = document.getElementById('button-right');
   btnRight.addEventListener('pointerdown', clickArrowRight);
@@ -223,6 +298,9 @@ document.addEventListener('DOMContentLoaded', () => {
   btnRight.addEventListener('pointerleave', stopArrowRight);
 });
 
+/**
+ * Starts an interval that repeatedly sets the LEFT key flag to true.
+ */
 function clickArrowLeft() {
   leftInterval = setInterval(() => {
     keyboard.LEFT = true;
@@ -230,11 +308,17 @@ function clickArrowLeft() {
   intervalIds.push(leftInterval);
 }
 
+/**
+ * Stops the interval for the LEFT key and resets its flag.
+ */
 function stopArrowLeft() {
   clearInterval(leftInterval);
   keyboard.LEFT = false;
 }
 
+/**
+ * Sets up pointer event listeners for the left arrow button once the DOM is loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const btnLeft = document.getElementById('button-left');
   btnLeft.addEventListener('pointerdown', clickArrowLeft);
@@ -242,6 +326,9 @@ document.addEventListener('DOMContentLoaded', () => {
   btnLeft.addEventListener('pointerleave', stopArrowLeft);
 });
 
+/**
+ * Starts an interval that repeatedly sets the SPACE key flag to true.
+ */
 function clickSpace() {
   spaceInterval = setInterval(() => {
     keyboard.SPACE = true;
@@ -249,11 +336,17 @@ function clickSpace() {
   intervalIds.push(spaceInterval);
 }
 
+/**
+ * Stops the interval for the SPACE key and resets its flag.
+ */
 function stopSpace() {
   clearInterval(spaceInterval);
   keyboard.SPACE = false;
 }
 
+/**
+ * Sets up pointer event listeners for the space button once the DOM is loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const btnSpace = document.getElementById('button-space');
   btnSpace.addEventListener('pointerdown', clickSpace);
@@ -261,6 +354,9 @@ document.addEventListener('DOMContentLoaded', () => {
   btnSpace.addEventListener('pointerleave', stopSpace);
 });
 
+/**
+ * Starts an interval that repeatedly sets the X key flag to true.
+ */
 function clickX() {
   throwInterval = setInterval(() => {
     keyboard.X = true;
@@ -268,12 +364,18 @@ function clickX() {
   intervalIds.push(throwInterval);
 }
 
+/**
+ * Stops the interval for the X key, resets its flag, and clears the xWasPressed flag.
+ */
 function stopX() {
   clearInterval(throwInterval);
   keyboard.X = false;
   keyboard.xWasPressed = false;
 }
 
+/**
+ * Sets up pointer event listeners for the X button once the DOM is loaded.
+ */
 document.addEventListener('DOMContentLoaded', () => {
   const btnThrow = document.getElementById('button-x');
   btnThrow.addEventListener('pointerdown', clickX);
@@ -281,6 +383,10 @@ document.addEventListener('DOMContentLoaded', () => {
   btnThrow.addEventListener('pointerleave', stopX);
 });
 
+/**
+ * Starts or Restarts the given audio element by pausing, resetting its time, and playing it if loaded and the game is not paused.
+ * @param {HTMLAudioElement} audio - The audio element to play.
+ */
 function restartSound(audio) {
   if (audio) {
     if (gameStatusPause) return;
@@ -295,53 +401,3 @@ function restartSound(audio) {
     }
   }
 }
-
-document.addEventListener('DOMContentLoaded', () => {
-  const fullscreenOpenButton = document.getElementById('fullscreenOpenButton');
-  const fullscreenCloseButton = document.getElementById('fullscreenCloseButton');
-  const gameContainer = document.getElementById('game-container');
-
-  fullscreenOpenButton.addEventListener('click', () => {
-    openFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer);
-  });
-
-  fullscreenCloseButton.addEventListener('click', () => {
-    closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer);
-  });
-});
-
-function openFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer) {
-  fullscreenOpenButton.classList.add('hideButton');
-  fullscreenCloseButton.classList.remove('hideButton');
-  document.querySelector('.buttonFullscreenImg').style.width = '48px';
-  document.querySelector('.buttonFullscreenImg').style.height = '48px';
-  if (gameContainer.requestFullscreen) {
-    gameContainer.requestFullscreen();
-  } else if (gameContainer.webkitRequestFullscreen) {
-    gameContainer.webkitRequestFullscreen();
-  } else if (gameContainer.msRequestFullscreen) {
-    gameContainer.msRequestFullscreen();
-  }
-}
-
-function closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer) {
-  fullscreenOpenButton.classList.remove('hideButton');
-  fullscreenCloseButton.classList.add('hideButton');
-  document.querySelector('.buttonFullscreenImg').style.width = '24px';
-  document.querySelector('.buttonFullscreenImg').style.height = '24px';
-  if (document.fullscreenElement || document.webkitFullscreenElement || document.msFullscreenElement) {
-    if (document.exitFullscreen) {
-      document.exitFullscreen();
-    } else if (document.webkitExitFullscreen) {
-      document.webkitExitFullscreen();
-    } else if (document.msExitFullscreen) {
-      document.msExitFullscreen();
-    }
-  }
-}
-
-document.addEventListener('fullscreenchange', () => {
-  if (!document.fullscreenElement) {
-    closeFullscreen();
-  }
-});

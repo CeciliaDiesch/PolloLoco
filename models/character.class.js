@@ -1,3 +1,32 @@
+/**
+ * Represents the main character in the game.
+ * Extends MovableObject.
+ *
+ * @class Character
+ * @extends MovableObject
+ *
+ * @property {number} height - The character's height.
+ * @property {number} y - The vertical position of the character.
+ * @property {number} speed - The movement speed.
+ * @property {Object} offset - Collision offsets for the character.
+ * @property {number} offset.top - Top offset.
+ * @property {number} offset.bottom - Bottom offset.
+ * @property {number} offset.left - Left offset.
+ * @property {number} offset.right - Right offset.
+ * @property {World} world - Reference to the game world.
+ * @property {number} lastMovementTime - Timestamp of the last movement (initialized with Date.now()).
+ * @property {boolean} otherDirection - Indicates if the character is facing left.
+ * @property {boolean} hasMoved - Indicates if the character has moved.
+ * @property {HTMLAudioElement} hitChicken_sound - Sound played when the character is hit by a chicken.
+ * @property {HTMLAudioElement} hitEndboss_sound - Sound played when the character hits the endboss.
+ * @property {HTMLAudioElement} walking_sound - Sound played when the character is walking.
+ * @property {string[]} Images_Walking - Array of image paths for the walking animation.
+ * @property {string[]} Images_Idle - Array of image paths for the idle animation.
+ * @property {string[]} Images_Wait - Array of image paths for the long idle (wait) animation.
+ * @property {string[]} Images_Jumping - Array of image paths for the jumping animation.
+ * @property {string[]} Images_Hurt - Array of image paths for the hurt animation.
+ * @property {string[]} Images_Dead - Array of image paths for the death animation.
+ */
 class Character extends MovableObject {
   height = 240;
   y = 80;
@@ -12,7 +41,6 @@ class Character extends MovableObject {
   lastMovementTime = Date.now();
   otherDirection = false;
   hasMoved = true;
-
   hitChicken_sound = createSound('audio/hitChicken.mp3');
   hitEndboss_sound = createSound('audio/hitEndboss.mp3');
   walking_sound = createSound('audio/walking42.mp3');
@@ -76,6 +104,11 @@ class Character extends MovableObject {
     '../assets/img/2_character_pepe/5_dead/D-57.png',
   ];
 
+  /**
+   * Constructs a new Character instance by loading all necessary image sets,
+   * starting animations and gravity, and initializing sound and position properties.
+   * @constructor
+   */
   constructor() {
     super();
     this.loadImage('../assets/img/2_character_pepe/2_walk/W-22.png');
@@ -92,6 +125,9 @@ class Character extends MovableObject {
     this.walking_sound.preload = 'auto';
   }
 
+  /**
+   * Initiates all character animations including movement, waiting, and jumping.
+   */
   animate() {
     this.moveCharacter();
     this.checkHasMoved();
@@ -100,6 +136,10 @@ class Character extends MovableObject {
     this.animateJumpingCharacter();
   }
 
+  /**
+   * Moves the character based on keyboard input at 60 FPS.
+   * Updates direction, triggers movement functions, and adjusts the camera position.
+   */
   moveCharacter() {
     let moving = setInterval(() => {
       this.hasMoved = false;
@@ -123,6 +163,10 @@ class Character extends MovableObject {
     intervalIds.push(moving);
   }
 
+  /**
+   * Checks if the character has moved and updates the last movement time accordingly.
+   * This is used to control idle animations.
+   */
   checkHasMoved() {
     let checkHasMoved = setInterval(() => {
       if (this.hasMoved) {
@@ -132,6 +176,10 @@ class Character extends MovableObject {
     intervalIds.push(checkHasMoved);
   }
 
+  /**
+   * Animates the character's walking motion.
+   * Pauses walking sound if character is not moving, checks for death or hurt states, and plays walking animation if moving.
+   */
   animateMovingCharacter() {
     let Animation = setInterval(() => {
       this.walking_sound.pause();
@@ -146,6 +194,10 @@ class Character extends MovableObject {
     intervalIds.push(Animation);
   }
 
+  /**
+   * Animates the character's idle state based on time since the last movement.
+   * Plays a wait animation if idle for 5 seconds or longer, otherwise plays the idle animation.
+   */
   animateWaitingCharacter() {
     let waitAnimation = setInterval(() => {
       if (gameStatusPause) return;
@@ -159,6 +211,9 @@ class Character extends MovableObject {
     intervalIds.push(waitAnimation);
   }
 
+  /**
+   * Animates the character's jumping state by regularly checking if the jump animation should be played.
+   */
   animateJumpingCharacter() {
     let jumpAnimation = setInterval(() => {
       this.checkJumpAnimation();
@@ -166,6 +221,9 @@ class Character extends MovableObject {
     intervalIds.push(jumpAnimation);
   }
 
+  /**
+   * Initiates a jump by setting the vertical speed.
+   */
   jump() {
     this.speedY = 30;
   }
