@@ -11,7 +11,7 @@ document.addEventListener('DOMContentLoaded', () => {
   });
 
   fullscreenCloseButton.addEventListener('click', () => {
-    closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer);
+    closeFullscreen();
   });
 });
 
@@ -41,7 +41,9 @@ function openFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContain
  * @param {HTMLElement} fullscreenCloseButton - The button element that triggers closing fullscreen.
  * @param {HTMLElement} gameContainer - The container element that was displayed in fullscreen.
  */
-function closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContainer) {
+function closeFullscreen() {
+  fullscreenOpenButton = document.getElementById('fullscreenOpenButton');
+  fullscreenCloseButton = document.getElementById('fullscreenCloseButton');
   fullscreenOpenButton.classList.remove('hideButton');
   fullscreenCloseButton.classList.add('hideButton');
   document.querySelector('.buttonFullscreenImg').style.width = '24px';
@@ -63,5 +65,19 @@ function closeFullscreen(fullscreenOpenButton, fullscreenCloseButton, gameContai
 document.addEventListener('fullscreenchange', () => {
   if (!document.fullscreenElement) {
     closeFullscreen();
+  }
+});
+
+/**
+ * Disables the default context menu on the button container element.
+ * Waits for the DOM to load, then attaches a contextmenu listener to prevent default actions.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  const btnContainer = document.getElementById('button-container');
+  if (btnContainer) {
+    btnContainer.addEventListener('contextmenu', function (e) {
+      e.preventDefault();
+      e.stopPropagation();
+    });
   }
 });

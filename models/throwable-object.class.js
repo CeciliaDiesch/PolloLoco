@@ -20,27 +20,33 @@ class ThrowableObject extends MovableObject {
   height = 70;
   width = 50;
   world;
-  bottle_sound_flying = createSound('audio/bottleFly.mp3');
-  bottle_sound_flying_straight = createSound('audio/bottleFlyStraight.mp3');
-  bottle_sound_splash = createSound('audio/bottleSplash.mp3');
+  bottle_sound_flying = soundManager.bottle_sound_flying;
+  bottle_sound_flying_straight = soundManager.bottle_sound_flying_straight;
+  bottle_sound_splash = soundManager.bottle_sound_splash;
   moveXInterval;
   checkGroundInterval;
+  offset = {
+    top: 15,
+    bottom: 10,
+    left: 10,
+    right: 5,
+  };
 
   Images_Throwing = [
-    '../assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/1_bottle_rotation.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/2_bottle_rotation.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/3_bottle_rotation.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/4_bottle_rotation.png',
   ];
 
   Images_Splash = [
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
-    '../assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/1_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/2_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/3_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/4_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/5_bottle_splash.png',
+    './assets/img/6_salsa_bottle/bottle_rotation/bottle_splash/6_bottle_splash.png',
   ];
 
   /**
@@ -58,7 +64,7 @@ class ThrowableObject extends MovableObject {
     this.y = y;
     this.world = world;
     this.bottle = bottle;
-    this.loadImage('../assets/img/6_salsa_bottle/salsa_bottle.png');
+    this.loadImage('./assets/img/6_salsa_bottle/salsa_bottle.png');
     this.loadImages(this.Images_Throwing);
     this.loadImages(this.Images_Splash);
     this.bottle_sound_flying.loop = true;
@@ -111,7 +117,6 @@ class ThrowableObject extends MovableObject {
    */
   splash() {
     this.stopFlying();
-    this.splashPlayed = true;
     this.bottleHitCounted = true;
     this.bottle_sound_splash.play();
     let splashFrame = 0;
@@ -120,6 +125,9 @@ class ThrowableObject extends MovableObject {
       splashFrame++;
       if (splashFrame >= this.Images_Splash.length) {
         clearInterval(splashAnimation);
+        setTimeout(() => {
+          this.splashPlayed = true;
+        }, 100);
       }
     }, 100);
     intervalIds.push(splashAnimation);
@@ -137,5 +145,35 @@ class ThrowableObject extends MovableObject {
       }
     }, 1);
     intervalIds.push(this.checkGroundInterval);
+  }
+
+  /**
+   * Periodically checks if the throw key (X) has been released while the object is in flight.
+   * If so and the object is above ground and the splash hasn't been played, the acceleration increases to make it sink faster.
+   */
+  checkReleaseX() {
+    this.sinkInterval = setInterval(() => {
+      if (this.world.keyboard && !this.world.keyboard.X && this.isAboveGround() && !this.splashPlayed) {
+        this.accelartion = 10;
+      }
+    }, 200);
+    intervalIds.push(this.sinkInterval);
+  }
+
+  /**
+   * Initiates horizontal movement for the thrown object.
+   */
+  throwHorizontal() {
+    if (this.otherDirection === true) {
+      this.x -= 50;
+    }
+    this.moveXInterval = setInterval(() => {
+      if (this.otherDirection === true) {
+        this.x -= 10;
+      } else {
+        this.x += 10;
+      }
+    }, 25);
+    intervalIds.push(this.moveXInterval);
   }
 }

@@ -4,59 +4,17 @@ let world;
 let keyboard = new Keyboard();
 let intervalIds = [];
 i = 1;
-let allAudios = [];
-start_sound = createSound('./audio/startLetsGo3.mp3');
-background_sound = createSound('./audio/backgroundMusic2.mp3');
-background_sound.volume = 0.1;
-background_sound.loop = true;
 let gameStarted = false;
-let gameStatusPause = false;
+let gameStatusPause = true;
 let helpWindowActive = false;
-let isMuted = false;
 let rightInterval;
 let leftInterval;
 let spaceInterval;
 let throwInterval;
-
-/**
- * Creates a new world and passes the canvas and global keyboard object to the world constructor.
- */
-function init() {
-  canvas = document.getElementById('canvas');
-  world = new World(canvas, keyboard);
-}
-
-/**
- * Creates a new audio object with the provided source, adds it to the global allAudios array, and returns the audio object.
- * @param {string} src - The URL of the audio file.
- * @returns {HTMLAudioElement} The newly created audio object.
- */
-function createSound(src) {
-  const sound = new Audio(src);
-  allAudios.push(sound);
-  return sound;
-}
-
-/**
- * Toggles the global mute state, updates all audio objects, and changes the mute button image accordingly.
- */
-function toggleMuteAllSounds() {
-  isMuted = !isMuted;
-  allAudios.forEach((audio) => (audio.muted = isMuted));
-  const muteButtonImg = document.querySelector('#muteButton img');
-  if (isMuted) {
-    muteButtonImg.src = './assets/img/5_background/noSound2.png';
-  } else {
-    muteButtonImg.src = './assets/img/5_background/sound2.png';
-  }
-}
-
-/**
- * Opens the imprint page in a new browser tab.
- */
-function showImprint() {
-  window.open('imprint.html', '_blank');
-}
+document.addEventListener('DOMContentLoaded', () => {
+  start_sound = soundManager.start_sound;
+  background_sound = soundManager.background_sound;
+});
 
 /**
  * Toggles the game state between play and pause by showing the overlay and calling the appropriate function.
@@ -86,11 +44,37 @@ function startGame(startButton) {
   initLevel1();
   init();
   gameStarted = true;
-  gameStatusPause = false;
   document.getElementById('buttonContainerMobilePlay').classList.add('mobileSee');
   document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
-  restartSound(start_sound);
-  restartSound(background_sound);
+  document.getElementById('mainButtonsAndFullscreenButton').classList.add('mobilePosition');
+  document.getElementById('canvas').classList.add('backgroundBlur');
+  start_sound.play();
+}
+
+/**
+ * Creates a new world and passes the canvas and global keyboard object to the world constructor.
+ * Shows the loading Spinner until all Audios are loaded
+ */
+function init() {
+  showLoadingOverlay();
+  canvas = document.getElementById('canvas');
+  world = new World(canvas, keyboard);
+  waitForAllAudiosToLoad().then(() => {
+    const loadingOverlay = document.getElementById('loading-overlay');
+    if (loadingOverlay) {
+      loadingOverlay.style.display = 'none';
+      gameStatusPause = false;
+      background_sound.play();
+    }
+  });
+}
+
+/**
+ * Displays the loading overlay by setting its display style to "block".
+ */
+function showLoadingOverlay() {
+  const loadingOverlay = document.getElementById('loading-overlay');
+  loadingOverlay.style.display = 'flex';
 }
 
 /**
@@ -112,19 +96,22 @@ function playGame(startButton) {
   startButton.innerText = 'Pause';
   startButton.classList.add('pause');
   gameStatusPause = false;
-  restartSound(background_sound);
+  background_sound.play();
 }
 
 /**
  * Restarts the game by hiding the overlay, stopping the character, and resetting settings and canvas.
  */
 function restartGame() {
+  if (!gameStarted) return;
   if (helpWindowActive) return;
   const startButton = document.querySelector('.startButton');
   document.getElementById('overlay').style.display = 'none';
   world.character.stopGame();
   resetSettings(startButton);
   resetCanvas();
+  gameStarted = false;
+  playPauseGame();
 }
 
 /**
@@ -132,6 +119,7 @@ function restartGame() {
  */
 function resetCanvas() {
   const buttonContainer = document.getElementById('button-container');
+  document.getElementById('mainButtonsAndFullscreenButton').classList.remove('mobilePosition');
   const oldCanvas = document.getElementById('canvas');
   const parent = oldCanvas.parentNode;
   parent.removeChild(oldCanvas);
@@ -215,8 +203,15 @@ function closeHelp(helpOverlay, startButton, restartButton, explanationButton, c
   explanationButton.classList.remove('back');
   explanationButton.innerText = 'Help';
   if (gameStarted) {
-    restartSound(background_sound);
+    background_sound.play();
   }
+}
+
+/**
+ * Opens the imprint page in the same browser tab.
+ */
+function showImprint() {
+  window.location.href = './templates/imprint.html';
 }
 
 /**
@@ -267,6 +262,25 @@ window.addEventListener('keyup', (event) => {
   if (event.code == 'KeyX') {
     keyboard.X = false;
     keyboard.xWasPressed = false;
+  }
+});
+
+/**
+ * Prevents the Space key from triggering the start button while still allowing global Space events.
+ */
+document.addEventListener('DOMContentLoaded', () => {
+  const startButton = document.getElementById('start-button');
+  if (startButton) {
+    startButton.addEventListener('keydown', function (event) {
+      if (event.code === 'Space') {
+        event.preventDefault();
+      }
+    });
+    startButton.addEventListener('keyup', function (event) {
+      if (event.code === 'Space') {
+        keyboard.SPACE = false;
+      }
+    });
   }
 });
 
@@ -382,22 +396,3 @@ document.addEventListener('DOMContentLoaded', () => {
   btnThrow.addEventListener('pointerup', stopX);
   btnThrow.addEventListener('pointerleave', stopX);
 });
-
-/**
- * Starts or Restarts the given audio element by pausing, resetting its time, and playing it if loaded and the game is not paused.
- * @param {HTMLAudioElement} audio - The audio element to play.
- */
-function restartSound(audio) {
-  if (audio) {
-    if (gameStatusPause) return;
-    if (!audio.paused) {
-      audio.pause();
-      audio.currentTime = 0;
-    }
-    if (audio.readyState < 3) {
-      return;
-    } else {
-      audio.play().catch((error) => console.error(error));
-    }
-  }
-}

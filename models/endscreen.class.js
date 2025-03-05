@@ -10,9 +10,9 @@ class EndScreen extends DrawableObject {
     super();
     this.world = world;
     this.endscreenLost = new Image();
-    this.endscreenLost.src = '../assets/img/9_intro_outro_screens/game_over/oh no you lost!.png';
+    this.endscreenLost.src = './assets/img/9_intro_outro_screens/game_over/oh no you lost!.png';
     this.endscreenWon = new Image();
-    this.endscreenWon.src = '../assets/img/9_intro_outro_screens/win/won_2.png';
+    this.endscreenWon.src = './assets/img/9_intro_outro_screens/win/won_2.png';
   }
 
   /**

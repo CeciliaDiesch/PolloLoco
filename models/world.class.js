@@ -88,6 +88,7 @@ class World {
     this.ckeckCollisionCharacterBottles();
     this.ckeckCollisionBottlesEndboss();
     this.ckeckCollisionCharacterEndboss();
+    this.checkCollisionBottlesEnemy();
   }
 
   /**
@@ -97,7 +98,11 @@ class World {
   checkCollisionCharacterEnemy() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
-        this.character.hit();
+        if (enemy instanceof ChickenSmall) {
+          this.character.hit(2);
+        } else {
+          this.character.hit(5);
+        }
         this.statusbar.setPercentage(this.character.energy);
       }
     });
@@ -130,6 +135,20 @@ class World {
   }
 
   /**
+   * Checks collision between thrown bottles and the chickens.
+   * If a collision occurs the chicken disappears.
+   */
+  checkCollisionBottlesEnemy() {
+    this.level.enemies.forEach((enemy) => {
+      this.throwableObjects.forEach((bottleThrown) => {
+        if (enemy.isColliding(bottleThrown)) {
+          enemy.hitEnemyBottle(bottleThrown);
+        }
+      });
+    });
+  }
+
+  /**
    * Checks collision between thrown bottles and the endboss.
    * If a collision occurs and the bottle hasn't been counted yet as a hit, the endboss is hit and the statusbar is updated.
    */
@@ -149,7 +168,7 @@ class World {
    */
   ckeckCollisionCharacterEndboss() {
     if (this.character.isColliding(this.endboss)) {
-      this.character.hit();
+      this.character.hit(8);
       this.statusbar.setPercentage(this.character.energy);
     }
     if (this.character.isColliding(this.endboss) && this.character.isAboveGround()) {
@@ -277,7 +296,7 @@ class World {
    * @param {Object} obj - The object to be removed.
    */
   removeObject(obj) {
-    const levelArrays = ['bottle', 'coins'];
+    const levelArrays = ['bottle', 'coins', 'enemies'];
     for (let arrayName of levelArrays) {
       const index = this.level[arrayName].indexOf(obj);
       if (index > -1) {

@@ -34,12 +34,13 @@ class MovableObject extends DrawableObject {
   lastHit = 0;
   bottleHitEndboss = 100;
   world;
-  coin_sound = createSound('audio/coin.mp3');
-  bottle_sound = createSound('audio/collect3.mp3');
-  bottle_sound_splash = createSound('audio/bottleSplash.mp3');
-  gameOver_sound = createSound('audio/gameOver.mp3');
-  jippie_sound = createSound('audio/jippie.mp3');
-  ohNo_sound = createSound('audio/ohNo.mp3');
+  coin_sound = soundManager.coin_sound;
+  bottle_sound = soundManager.bottle_sound;
+  bottle_sound_splash = soundManager.bottle_sound_splash;
+  gameOver_sound = soundManager.gameOver_sound;
+  jippie_sound = soundManager.jippie_sound;
+  ohNo_sound = soundManager.ohNo_sound;
+  ching_sound = soundManager.ching_sound;
   splashPlayed = false;
   bottleHitCounted = false;
   hasStartedDeadAnimation = false;
@@ -107,13 +108,13 @@ class MovableObject extends DrawableObject {
   /**
    * Reduces characetrs energy by 5, plays the hit sound, and updates the last hit timestamp. It also ensures that energy does not drop below 0.
    */
-  hit() {
-    this.energy -= 5;
-    restartSound(this.hitChicken_sound);
+  hit(damage) {
+    this.energy -= damage;
     if (this.energy < 0) {
       this.energy = 0;
     } else {
       this.lastHit = new Date().getTime();
+      restartSound(this.hitChicken_sound);
     }
   }
 
@@ -128,7 +129,33 @@ class MovableObject extends DrawableObject {
     }
     this.world.removeObject(coin);
     this.coin_sound.volume = 0.3;
-    this.coin_sound.play();
+    restartSound(this.coin_sound);
+
+    if (this.coins === 100) {
+      this.swopsCoinsWithBottles();
+    }
+  }
+
+  /**
+   * Swaps coins with 5 new Bottle objects to the level. After 10 seconds, adding 5 new Coin objects to the level and resets the coin counter to 0.
+   */
+  swopsCoinsWithBottles() {
+    for (let i = 0; i < 5; i++) {
+      let newBottle = new Bottle();
+      newBottle.world = this.world;
+      this.world.level.bottle.push(newBottle);
+    }
+    setTimeout(() => {
+      for (let i = 0; i < 5; i++) {
+        let newCoin = new Coins();
+        newCoin.world = this.world;
+        this.world.level.coins.push(newCoin);
+      }
+    }, 10000);
+    setTimeout(() => {
+      restartSound(this.ching_sound);
+    }, 200);
+    this.coins = 0;
   }
 
   /**
@@ -141,7 +168,30 @@ class MovableObject extends DrawableObject {
       this.bottle = 100;
     }
     this.world.removeObject(bottle);
-    this.bottle_sound.play();
+    restartSound(this.bottle_sound);
+  }
+
+  /**
+   * Processes an enemy hit by a thrown bottle and removes it if hit.
+   */
+  hitEnemyBottle(bottleThrown) {
+    if (bottleThrown && !bottleThrown.splashPlayed) {
+      if (this.dead) return;
+      this.dead = true;
+      clearInterval(this.ChickenMovementInterval);
+      clearInterval(this.ChickenAnimationInterval);
+      if (this instanceof ChickenSmall) {
+        clearInterval(this.ChickenSmallMovementInterval);
+        clearInterval(this.ChickenSmallAnimationInterval);
+        this.loadImage('./assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png');
+      } else if (this instanceof Chicken) {
+        this.loadImage('./assets/img/3_enemies_chicken/chicken_normal/2_dead/dead.png');
+      }
+      setTimeout(() => {
+        this.world.removeObject(this);
+      }, 2000);
+      bottleThrown.splash();
+    }
   }
 
   /**
@@ -255,10 +305,10 @@ class MovableObject extends DrawableObject {
    */
   playFinalSoundCharacter() {
     if (this.bottleHitEndboss == 0) {
-      restartSound(this.jippie_sound);
+      this.jippie_sound.play();
     }
     if (this.energy == 0) {
-      restartSound(this.ohNo_sound);
+      this.ohNo_sound.play();
     }
   }
 
@@ -278,6 +328,7 @@ class MovableObject extends DrawableObject {
    * @param {string[]} images - An array of image paths for the animation.
    */
   playAnimation(images) {
+    if (this.dead) return;
     let i = this.currentImage % images.length;
     let path = images[i];
     this.img = this.imageCache[path];
@@ -286,9 +337,9 @@ class MovableObject extends DrawableObject {
 
   /**
    * Moves the object to the left by decreasing its x-coordinate by its speed.
-   * If the object moves completely off the left side of the screen it wraps around by resetting its x-coordinate to the level's end.
    */
   moveLeft() {
+    if (this.dead) return;
     this.x -= this.speed;
     if (this.x + this.width < 0) {
       this.x = this.world.level.level_end_x;
@@ -324,8 +375,7 @@ class MovableObject extends DrawableObject {
   }
 
   /**
-   * Initiates the throw action for the object.
-   * Decreases the bottle count by 20 (resets to 0 if below 100), sets vertical speed, applies gravity, and starts horizontal movement and ground/release checks.
+   * Initiates the throw action for the object. Decreases the bottle count by 20 (resets to 0 if below 100).
    */
   throw() {
     this.bottle -= 20;
@@ -338,36 +388,6 @@ class MovableObject extends DrawableObject {
     this.throwHorizontal();
     this.checkBottleGroundLevel();
     this.checkReleaseX();
-  }
-
-  /**
-   * Initiates horizontal movement for the thrown object.
-   */
-  throwHorizontal() {
-    if (this.otherDirection === true) {
-      this.x -= 50;
-    }
-    this.moveXInterval = setInterval(() => {
-      if (this.otherDirection === true) {
-        this.x -= 10;
-      } else {
-        this.x += 10;
-      }
-    }, 25);
-    intervalIds.push(this.moveXInterval);
-  }
-
-  /**
-   * Periodically checks if the throw key (X) has been released while the object is in flight.
-   * If so and the object is above ground and the splash hasn't been played, the acceleration increases to make it sink faster.
-   */
-  checkReleaseX() {
-    this.sinkInterval = setInterval(() => {
-      if (this.world.keyboard && !this.world.keyboard.X && this.isAboveGround() && !this.splashPlayed) {
-        this.accelartion = 10;
-      }
-    }, 200);
-    intervalIds.push(this.sinkInterval);
   }
 
   /**

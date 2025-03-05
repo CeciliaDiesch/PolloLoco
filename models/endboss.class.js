@@ -36,30 +36,41 @@ class Endboss extends MovableObject {
   world;
   endbossWalk = false;
   hasStartedBossMovement = false;
-  ouch_sound = createSound('audio/ouch1.mp3');
+  ouch_sound = soundManager.ouch_sound;
   paused = false;
 
   Images_Walking = [
-    '../assets/img/4_enemie_boss_chicken/1_walk/G1.png',
-    '../assets/img/4_enemie_boss_chicken/1_walk/G2.png',
-    '../assets/img/4_enemie_boss_chicken/1_walk/G3.png',
-    '../assets/img/4_enemie_boss_chicken/1_walk/G4.png',
+    './assets/img/4_enemie_boss_chicken/1_walk/G1.png',
+    './assets/img/4_enemie_boss_chicken/1_walk/G2.png',
+    './assets/img/4_enemie_boss_chicken/1_walk/G3.png',
+    './assets/img/4_enemie_boss_chicken/1_walk/G4.png',
   ];
 
   Images_Angry = [
-    '../assets/img/4_enemie_boss_chicken/2_alert/G5.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G6.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G7.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G8.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G9.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G10.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G11.png',
-    '../assets/img/4_enemie_boss_chicken/2_alert/G12.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G5.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G6.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G7.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G8.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G9.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G10.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G11.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G12.png',
   ];
 
-  Images_Hurt = ['../assets/img/4_enemie_boss_chicken/4_hurt/G21.png', '../assets/img/4_enemie_boss_chicken/4_hurt/G22.png', '../assets/img/4_enemie_boss_chicken/4_hurt/G23.png'];
+  Images_Attack = [
+    './assets/img/4_enemie_boss_chicken/2_alert/G5.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G6.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G7.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G8.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G9.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G10.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G11.png',
+    './assets/img/4_enemie_boss_chicken/2_alert/G12.png',
+  ];
 
-  Images_Dead = ['../assets/img/4_enemie_boss_chicken/5_dead/G24.png', '../assets/img/4_enemie_boss_chicken/5_dead/G25.png', '../assets/img/4_enemie_boss_chicken/5_dead/G26.png'];
+  Images_Hurt = ['./assets/img/4_enemie_boss_chicken/4_hurt/G21.png', './assets/img/4_enemie_boss_chicken/4_hurt/G22.png', './assets/img/4_enemie_boss_chicken/4_hurt/G23.png'];
+
+  Images_Dead = ['./assets/img/4_enemie_boss_chicken/5_dead/G24.png', './assets/img/4_enemie_boss_chicken/5_dead/G25.png', './assets/img/4_enemie_boss_chicken/5_dead/G26.png'];
 
   /**
    * Constructs a new Endboss instance by initializing its position, loading all animation images,
@@ -74,7 +85,9 @@ class Endboss extends MovableObject {
     this.loadImages(this.Images_Walking);
     this.loadImages(this.Images_Hurt);
     this.loadImages(this.Images_Dead);
+    this.loadImages(this.Images_Attack);
     this.speed = 0.1;
+    this.updateSpeed();
     this.previousX = this.x;
     this.animate();
   }
@@ -134,5 +147,15 @@ class Endboss extends MovableObject {
       }
     }, 1000 / 500);
     intervalIds.push(this.EndbossMovementInterval);
+  }
+
+  /**
+   * Periodically updates the object's speed.
+   * Every 5 seconds, sets this.speed to a random value between 0.05 and 0.4.
+   */
+  updateSpeed() {
+    this.speedInterval = setInterval(() => {
+      this.speed = Math.random() * (0.4 - 0.05) + 0.05;
+    }, 5000);
   }
 }
