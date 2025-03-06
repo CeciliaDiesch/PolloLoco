@@ -47,7 +47,7 @@ canvas {
 }
 
 .backgroundBlur {
-  background: url('./assets/img/5_background/complete_background.png');
+  background: url('../assets/img/5_background/complete_background.png');
   background-size: cover;
   z-index: 9;
 }
