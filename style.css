@@ -295,7 +295,7 @@ img:hover {
 
 @media only screen and (min-width: 1000px) and (max-width: 1900px) and (min-height: 800px) and (orientation: landscape) {
     .canvas {
-        max-height: 99vh;
+        max-height: 99vh !important;
     }
 }
   
