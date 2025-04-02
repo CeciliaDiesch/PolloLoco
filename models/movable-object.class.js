@@ -44,6 +44,7 @@ class MovableObject extends DrawableObject {
   splashPlayed = false;
   bottleHitCounted = false;
   hasStartedDeadAnimation = false;
+  hasJumped = false;
 
   /**
    * Constructs a new instance and sets the game over sound volume to 0.5.
@@ -75,7 +76,7 @@ class MovableObject extends DrawableObject {
     if (this instanceof ThrowableObject) {
       return this.y < 360;
     } else {
-      return this.y < 180;
+      return this.y <= 180;
     }
   }
 
@@ -86,7 +87,12 @@ class MovableObject extends DrawableObject {
   checkJumpAnimation() {
     if (this.isAboveGround()) {
       this.playAnimation(this.Images_Jumping);
+      this.hasJumped = true;
       return true;
+    }
+    if (this.hasJumped) {
+      this.currentImage = 0;
+      this.hasJumped = false;
     }
     return false;
   }
@@ -329,10 +335,20 @@ class MovableObject extends DrawableObject {
    */
   playAnimation(images) {
     if (this.dead) return;
-    let i = this.currentImage % images.length;
-    let path = images[i];
-    this.img = this.imageCache[path];
-    this.currentImage++;
+    if (images === this.Images_Jumping) {
+      if (this.currentImage < images.length) {
+        let i = this.currentImage;
+        let path = images[i];
+        this.img = this.imageCache[path];
+        this.currentImage++;
+        return;
+      }
+    } else {
+      let i = this.currentImage % images.length;
+      let path = images[i];
+      this.img = this.imageCache[path];
+      this.currentImage++;
+    }
   }
 
   /**

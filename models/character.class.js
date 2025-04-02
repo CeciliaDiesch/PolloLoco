@@ -124,6 +124,7 @@ class Character extends MovableObject {
     this.previousY = this.y;
     this.walking_sound.preload = 'auto';
     this.hitChicken_sound.volume = 0.2;
+    this.hasJumped = false;
   }
 
   /**
@@ -211,8 +212,10 @@ class Character extends MovableObject {
       if (this.checkDeadAnimation()) {
       } else if (this.checkHurtAnimation()) {
       } else if (this.world.keyboard.RIGHT || this.world.keyboard.LEFT) {
-        this.playAnimation(this.Images_Walking);
-        this.walking_sound.play();
+        if (!this.isAboveGround()) {
+          this.playAnimation(this.Images_Walking);
+          this.walking_sound.play();
+        }
       } else if (!this.world.keyboard.RIGHT || !this.world.keyboard.LEFT) {
         this.walking_sound.pause();
       }
@@ -243,7 +246,7 @@ class Character extends MovableObject {
   animateJumpingCharacter() {
     let jumpAnimation = setInterval(() => {
       this.checkJumpAnimation();
-    }, 80);
+    }, 200);
     intervalIds.push(jumpAnimation);
   }
 

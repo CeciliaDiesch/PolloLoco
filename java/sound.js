@@ -76,10 +76,15 @@ function createSound(src) {
  */
 function toggleMuteAllSounds() {
   isMuted = !isMuted;
-  Object.values(soundManager).forEach((audio) => {
+  localStorage.setItem('isMuted', JSON.stringify(isMuted));
+  Object.entries(soundManager).forEach(([key, audio]) => {
     audio.muted = isMuted;
     if (isMuted) {
       audio.pause();
+    } else {
+      if (key === 'background_sound') {
+        audio.play().catch((error) => console.error('Hintergrundsound konnte nicht gestartet werden:', error));
+      }
     }
   });
   const muteButtonImg = document.querySelector('#muteButton img');

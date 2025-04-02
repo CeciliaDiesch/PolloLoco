@@ -42,28 +42,28 @@
       <div id="overlayMobileTurn" class="overlayMobileTurn">Please turn your mobile device in landscape orientation to play.</div>
       <div id="button-container" class="buttonContainer">
         <div id="buttonContainerMobilePlay" class="buttonContainerMobilePlay">
-          <button id="button-left" class="gameButton actionButton">&#60;</button>
-          <button id="button-right" class="gameButton actionButton">&#62;</button>
-          <button id="button-space" class="gameButton actionButton">
+          <button id="button-left" tabindex="-1" class="gameButton actionButton">&#60;</button>
+          <button id="button-space" tabindex="-1" class="gameButton actionButton">
             <p>Jump</p>
           </button>
-          <button id="button-x" class="gameButton actionButton">
+          <button id="button-x" tabindex="-1" class="gameButton actionButton">
             <p>X</p>
           </button>
+          <button id="button-right" tabindex="-1" class="gameButton actionButton">&#62;</button>
         </div>
         <div id="mainButtonsAndFullscreenButton" class="mainButtonsAndFullscreenButton">
           <div id="main-Buttons" class="mainButtons mainButtonsStart">
-            <button id="start-button" class="gameButton startButton MobileTransparent" onclick="playPauseGame()">Start</button>
-            <button id="restart-button" class="gameButton restartButton MobileTransparent" onclick="restartGame()">Restart</button>
-            <button id="explanation-button" class="gameButton explanationButton MobileTransparent" onclick="showExplanation()">Help</button>
-            <button id="impressum-button" class="gameButton impressumButton MobileTransparent" onclick="showImprint()">Imprint</button>
+            <button id="start-button" tabindex="-1" class="gameButton startButton MobileTransparent" onclick="playPauseGame()">Start</button>
+            <button id="restart-button" tabindex="-1" class="gameButton restartButton MobileTransparent invisible" onclick="restartGame()">Restart</button>
+            <button id="explanation-button" tabindex="-1" class="gameButton explanationButton MobileTransparent" onclick="showExplanation()">Help</button>
+            <button id="impressum-button" tabindex="-1" class="gameButton impressumButton MobileTransparent" onclick="showImprint()">Imprint</button>
           </div>
         </div>
       </div>
       <div class="buttonFullscreenContainer">
-        <button id="muteButton" class="buttonFullscreen neverHide" onclick="toggleMuteAllSounds()"><img class="buttonFullscreenImg" src="./assets/img/5_background/sound2.png" /></button>
-        <button id="fullscreenOpenButton" class="buttonFullscreen"><img class="buttonFullscreenImg" src="./assets/img/5_background/fullscreen2.png" /></button>
-        <button id="fullscreenCloseButton" class="hideButton buttonFullscreen transitionHover" style="font-size: 56; padding-bottom: 6px">X&nbsp;&nbsp;</button>
+        <button id="muteButton" tabindex="-1" class="buttonFullscreen neverHide" onclick="toggleMuteAllSounds()"><img class="buttonFullscreenImg" src="./assets/img/5_background/sound2.png" /></button>
+        <button id="fullscreenOpenButton" tabindex="-1" class="buttonFullscreen"><img class="buttonFullscreenImg" src="./assets/img/5_background/fullscreen2.png" /></button>
+        <button id="fullscreenCloseButton" tabindex="-1" class="hideButton buttonFullscreen transitionHover" style="font-size: 56; padding-bottom: 6px">X&nbsp;&nbsp;</button>
       </div>
     </div>
   </body>

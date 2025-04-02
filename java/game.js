@@ -48,6 +48,7 @@ function startGame(startButton) {
   document.getElementById('main-Buttons').classList.remove('mainButtonsStart');
   document.getElementById('mainButtonsAndFullscreenButton').classList.add('mobilePosition');
   document.getElementById('canvas').classList.add('backgroundBlur');
+  document.getElementById('restart-button').classList.remove('invisible');
   start_sound.play();
 }
 
@@ -59,6 +60,7 @@ function init() {
   showLoadingOverlay();
   canvas = document.getElementById('canvas');
   world = new World(canvas, keyboard);
+  gameStatusPause = true;
   waitForAllAudiosToLoad().then(() => {
     const loadingOverlay = document.getElementById('loading-overlay');
     if (loadingOverlay) {
@@ -281,6 +283,12 @@ document.addEventListener('DOMContentLoaded', () => {
         keyboard.SPACE = false;
       }
     });
+  }
+});
+
+window.addEventListener('keydown', (event) => {
+  if (event.code === 'Space' && document.activeElement.tagName === 'BUTTON') {
+    event.preventDefault();
   }
 });
 

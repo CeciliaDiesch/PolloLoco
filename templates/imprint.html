@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="favicon" href="../assets/icons/favicons/iconChicken2.png" />
+    <title>Imprint</title>
+</head>
+<style>
+    body{
+        margin: 24px;
+        background-image: url('../assets/img/5_background/background12.png');
+        background-size: cover;
+        background-position: center;
+        height: 90vh;
+        max-height: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        margin-top: 64px;
+        font-family: 'tradeWinds', Arial, Helvetica, sans-serif;
+    }
+
+    .imprintButtonBack {
+        position: fixed;
+        top: 64px;
+        left: 64px;
+        content: "\2190";
+        color: black;
+        font-size: 40px;
+        font-weight: bold;
+        background-color: transparent;
+        cursor: pointer;
+        border: none;
+        }
+
+        .imprintButtonBack:hover {
+            transform: scale(1.1);
+        }
+
+    @media only screen and (orientation: landscape) and (pointer: coarse) and (hover: none){
+        body{
+        margin: 12px;
+        margin-top: 24px;
+        }
+
+        .imprintButtonBack {
+            top: 24px;
+            left: 64px;
+        }
+    }
+
+    @media only screen and (orientation: portrait) and (pointer: coarse) and (hover: none){
+        .content{
+            margin-top: 116px;
+        }
+    }
+
+    @font-face {
+    font-family: 'tradeWinds';
+    src: url('../fonts/tradeWinds-Regular.ttf') format('truetype');
+    }
+
+</style>
+<body>
+    <button class="imprintButtonBack" onclick="window.history.back()">&#x2B05;</button>
+
+    <div class="content">
+        <h1>Imprint</h1><p>Information pursuant to § 5 TMG</p>
+        <p>Cecilia Diesch <br> 
+        Essener Str 2<br> 
+        10555 Berlin <br> 
+        </p>
+        <p> <strong>Represented by: </strong><br>
+        Cecilia Diesch<br>
+        </p>
+        <p><strong>Contact:</strong> <br>
+        Phone: +49 (0)176-30465596<br>
+        E-Mail: <a href='mailto:cecilia-diesch@web.de'>cecilia-diesch@web.de</a></br></p><br>
+    </div>
+        
+</body>
+</html>
