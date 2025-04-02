@@ -276,7 +276,11 @@ img:hover {
   }
 }
 
+<<<<<<< HEAD:style/style.css
 @media only screen and (min-width: 900px) and (max-width: 1900px) and (max-height: 1200px) and (orientation: landscape) and (pointer: coarse) and (hover: none) {
+=======
+@media only screen and (min-width: 900px) and (max-width: 1900px) and (max-height: 1200px) and (orientation: landscape) and (pointer: coarse) and (hover: none){
+>>>>>>> 1f7069f00511b36a257537ae6d3f2ab20f18f538:style.css
   .actionButton {
     width: 108px !important;
     height: 32px !important;
@@ -296,7 +300,17 @@ img:hover {
 
 }
 
+<<<<<<< HEAD:style/style.css
 @media only screen and (min-width: 320px) and (max-width: 1900px) and (max-height: 1200px) and (orientation: landscape) and (pointer: coarse) and (hover: none) {
+=======
+@media only screen and (min-width: 1000px) and (max-width: 1900px) and (min-height: 800px) and (orientation: landscape) and (pointer: coarse) and (hover: none) {
+    .canvas {
+        max-height: 99vh !important;
+    }
+}
+  
+@media only screen and (min-width: 320px) and (max-width: 1900px) and (max-height: 1200px) and (orientation: landscape) and (pointer: coarse) and (hover: none){
+>>>>>>> 1f7069f00511b36a257537ae6d3f2ab20f18f538:style.css
   .mobilePosition {
     justify-content: flex-end;
     overflow: hidden;
@@ -541,7 +555,11 @@ img:hover {
 }
 
 @media screen and (max-width: 720px),
+<<<<<<< HEAD:style/style.css
 only screen and (max-width: 1900px) and (max-height: 1200px) and (orientation: landscape) and (pointer: coarse) and (hover: none) {
+=======
+only screen and (max-width: 1900px) and (max-height: 1200px) and (orientation: landscape) and (pointer: coarse) and (hover: none){
+>>>>>>> 1f7069f00511b36a257537ae6d3f2ab20f18f538:style.css
   h1 {
     display: none;
   }
@@ -587,6 +605,7 @@ only screen and (max-width: 1900px) and (max-height: 1200px) and (orientation: l
     display: none;
   }
 }
+<<<<<<< HEAD:style/style.css
 
 @media (min-width: 2000px) {
   body {
@@ -595,3 +614,5 @@ only screen and (max-width: 1900px) and (max-height: 1200px) and (orientation: l
     background-position: center;
   }
 }
+=======
+>>>>>>> 1f7069f00511b36a257537ae6d3f2ab20f18f538:style.css
