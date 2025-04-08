@@ -101,7 +101,7 @@ class World {
         if (enemy instanceof ChickenSmall) {
           this.character.hit(2);
         } else {
-          this.character.hit(5);
+          this.character.hit(3);
         }
         this.statusbar.setPercentage(this.character.energy);
       }

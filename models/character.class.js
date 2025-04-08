@@ -236,7 +236,7 @@ class Character extends MovableObject {
       if (Date.now() - this.lastMovementTime >= 100 && Date.now() - this.lastMovementTime < 5000) {
         this.playAnimation(this.Images_Idle);
       }
-    }, 500);
+    }, 200);
     intervalIds.push(waitAnimation);
   }
 

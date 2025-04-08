@@ -112,7 +112,7 @@ class MovableObject extends DrawableObject {
   }
 
   /**
-   * Reduces characetrs energy by 5, plays the hit sound, and updates the last hit timestamp. It also ensures that energy does not drop below 0.
+   * Reduces characters energy by 5, plays the hit sound, and updates the last hit timestamp. It also ensures that energy does not drop below 0.
    */
   hit(damage) {
     this.energy -= damage;
