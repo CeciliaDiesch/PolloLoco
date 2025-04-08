@@ -81,7 +81,7 @@ class World {
 
     let stompInterval = setInterval(() => {
       this.checkStompCollisionCharacterEnemy();
-    }, 1000 / 40);
+    }, 1000 / 800);
     intervalIds.push(stompInterval);
 
     let sideInterval = setInterval(() => {
@@ -107,7 +107,7 @@ class World {
   checkStompCollisionCharacterEnemy() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
-        let characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
+        let characterBottom = this.character.y + this.character.height - 5;
         let enemyMiddle = enemy.y + enemy.height / 2;
         if (characterBottom < enemyMiddle) {
           this.killEnemy(enemy);
