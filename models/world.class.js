@@ -34,6 +34,7 @@ class World {
   keyboard;
   camera_x = 0;
   gameOver = false;
+  sorry_sound = soundManager.sorry_sound;
 
   /**
    * Constructs a new World instance, initializing the rendering context, keyboard input, and game state.
@@ -77,13 +78,22 @@ class World {
       this.checkThrowObjects();
     }, 1000 / 20);
     intervalIds.push(run);
+
+    let stompInterval = setInterval(() => {
+      this.checkStompCollisionCharacterEnemy();
+    }, 1000 / 40);
+    intervalIds.push(stompInterval);
+
+    let sideInterval = setInterval(() => {
+      this.checkSideCollisionCharacterEnemy();
+    }, 1000 / 10);
+    intervalIds.push(sideInterval);
   }
 
   /**
    * Checks all collision events by calling individual collision check methods.
    */
   checkCollisions() {
-    this.checkCollisionCharacterEnemy();
     this.ckeckCollisionCharacterCoins();
     this.ckeckCollisionCharacterBottles();
     this.ckeckCollisionBottlesEndboss();
@@ -92,18 +102,59 @@ class World {
   }
 
   /**
-   * Checks collision between the character and each enemy.
-   * If colliding, the character is hit and the statusbar energy is updated.
+   * Checks if the character jumps on an enemy from above.
    */
-  checkCollisionCharacterEnemy() {
+  checkStompCollisionCharacterEnemy() {
     this.level.enemies.forEach((enemy) => {
       if (this.character.isColliding(enemy)) {
-        if (enemy instanceof ChickenSmall) {
-          this.character.hit(2);
-        } else {
-          this.character.hit(3);
+        let characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
+        let enemyMiddle = enemy.y + enemy.height / 2;
+        if (characterBottom < enemyMiddle) {
+          this.killEnemy(enemy);
+          restartSound(this.sorry_sound);
+          setTimeout(() => {
+            this.removeObject(enemy);
+          }, 2000);
         }
-        this.statusbar.setPercentage(this.character.energy);
+      }
+    });
+  }
+
+  /**
+   * Kills and removes enemy
+   */
+  killEnemy(enemy) {
+    if (enemy instanceof ChickenSmall) {
+      enemy.dead = true;
+      clearInterval(enemy.ChickenSmallMovementInterval);
+      clearInterval(enemy.ChickenSmallAnimationInterval);
+      enemy.loadImage('./assets/img/3_enemies_chicken/chicken_small/2_dead/dead.png');
+    } else {
+      enemy.dead = true;
+      clearInterval(enemy.ChickenMovementInterval);
+      clearInterval(enemy.ChickenAnimationInterval);
+      enemy.loadImage('./assets/img/3_enemies_chicken/chicken_normal/2_dead/dead.png');
+    }
+  }
+
+  /**
+   *  Checks if the character collides with an enemy from the side (causing damage).
+   */
+  checkSideCollisionCharacterEnemy() {
+    this.level.enemies.forEach((enemy) => {
+      if (this.character.isColliding(enemy)) {
+        if (!enemy.dead) {
+          let characterBottom = this.character.y + this.character.height - this.character.offset.bottom;
+          let enemyMiddle = enemy.y + enemy.height / 2;
+          if (characterBottom >= enemyMiddle) {
+            if (enemy instanceof ChickenSmall) {
+              this.character.hit(2);
+            } else {
+              this.character.hit(3);
+            }
+            this.statusbar.setPercentage(this.character.energy);
+          }
+        }
       }
     });
   }

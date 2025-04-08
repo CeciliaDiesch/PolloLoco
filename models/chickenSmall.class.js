@@ -22,8 +22,8 @@ class ChickenSmall extends Chicken {
   offset = {
     top: 0,
     bottom: 0,
-    left: 10,
-    right: 10,
+    left: 5,
+    right: 5,
   };
   Images_Walking = [
     './assets/img/3_enemies_chicken/chicken_small/1_walk/1_w.png',

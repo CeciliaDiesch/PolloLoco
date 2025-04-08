@@ -25,6 +25,7 @@ document.addEventListener('DOMContentLoaded', () => {
   soundManager.walking_sound = createSound('./audio/walking42.mp3');
   soundManager.ouch_sound = createSound('./audio/ouch1.mp3');
   soundManager.ching_sound = createSound('./audio/ching.mp3');
+  soundManager.sorry_sound = createSound('./audio/sorry.mp3');
   soundManager.background_sound.volume = 0.1;
   soundManager.background_sound.loop = true;
   soundManager.start_sound.volume = 0.5;

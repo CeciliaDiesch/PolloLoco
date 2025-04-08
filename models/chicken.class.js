@@ -22,8 +22,8 @@ class Chicken extends MovableObject {
   offset = {
     top: 0,
     bottom: 0,
-    left: 10,
-    right: 13,
+    left: 5,
+    right: 7,
   };
   Images_Walking = [
     './assets/img/3_enemies_chicken/chicken_normal/1_walk/1_w.png',
